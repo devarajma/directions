@@ -1,0 +1,143 @@
+{
+  "session_id": "20260414_092740",
+  "start_time": "2026-04-14T09:27:40.944307",
+  "end_time": "2026-04-14T09:29:20.541659",
+  "duration_seconds": 99.6,
+  "total_frames": 906,
+  "total_detections": 599,
+  "total_danger_events": 0,
+  "avg_fps": 20.9,
+  "avg_detections_per_frame": 0.66,
+  "top_labels": {
+    "person": 424,
+    "chair": 63,
+    "pizza": 38,
+    "vase": 16,
+    "tv": 13,
+    "bed": 9,
+    "umbrella": 9,
+    "bear": 6,
+    "wine glass": 6,
+    "dining table": 4,
+    "horse": 4,
+    "bottle": 3,
+    "laptop": 2,
+    "airplane": 1,
+    "keyboard": 1
+  },
+  "zone_distribution": {
+    "unknown": 599
+  },
+  "proximity_distribution": {
+    "far": 13,
+    "close": 318,
+    "medium": 268
+  },
+  "approach_distribution": {
+    "stable": 389,
+    "approaching": 121,
+    "receding": 89
+  },
+  "recent_nav_messages": [
+    {
+      "t": 1776139156.1166,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.1635,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.2121,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.262,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.3088,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.3564,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.4018,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.4498,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.4973,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.5461,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.5954,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.6457,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.6927,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.7355,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.7835,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.8313,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.8806,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.9322,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139156.9783,
+      "message": "Path clear",
+      "safe": true
+    },
+    {
+      "t": 1776139157.0269,
+      "message": "Path clear",
+      "safe": true
+    }
+  ]
+}

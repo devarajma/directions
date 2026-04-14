@@ -1,0 +1,907 @@
+timestamp,frame_id,message,is_safe,num_detections,fps
+1776139113.2275,1,Path clear,True,0,0.02
+1776139113.2797,2,Path clear,True,0,19.18
+1776139113.3301,3,Path clear,True,0,19.81
+1776139113.3754,4,Path clear,True,0,22.1
+1776139113.4236,5,Path clear,True,0,20.74
+1776139113.4698,6,Path clear,True,0,21.67
+1776139113.5144,7,Path clear,True,0,22.38
+1776139113.5608,8,Path clear,True,0,21.59
+1776139113.6042,9,Path clear,True,0,23.01
+1776139113.6642,10,Airplane on your center — far,True,1,16.69
+1776139113.7127,11,Path clear,True,0,20.6
+1776139113.7595,12,Path clear,True,0,21.37
+1776139113.8039,13,Path clear,True,0,22.54
+1776139113.8563,14,Path clear,True,0,19.05
+1776139113.9002,15,Path clear,True,0,22.81
+1776139113.9458,16,Path clear,True,0,21.9
+1776139113.9898,17,Bear on your center — close,True,1,22.76
+1776139114.0337,18,Bear on your center — close,True,1,22.75
+1776139114.0775,19,Path clear,True,0,22.85
+1776139114.1246,20,Bear on your center — close,True,1,21.24
+1776139114.171,21,Bear on your center — close,True,1,21.55
+1776139114.216,22,Path clear,True,0,22.22
+1776139114.2636,23,Bear approaching on your center — close,True,1,20.99
+1776139114.3111,24,Bear approaching on your center — close,True,1,21.04
+1776139114.355,25,Path clear,True,0,22.8
+1776139114.4009,26,Path clear,True,0,21.76
+1776139114.449,27,Path clear,True,0,20.81
+1776139114.4959,28,Path clear,True,0,21.32
+1776139114.5432,29,Path clear,True,0,21.16
+1776139114.5878,30,Path clear,True,0,22.41
+1776139114.6332,31,Path clear,True,0,22.03
+1776139114.6819,32,Path clear,True,0,20.53
+1776139114.7267,33,Path clear,True,0,22.3
+1776139114.7703,34,Path clear,True,0,22.97
+1776139114.8928,35,Path clear,True,0,8.16
+1776139114.9374,36,Path clear,True,0,22.44
+1776139114.982,37,Person on your center — medium ⚠ danger,False,1,22.44
+1776139115.0279,38,Person on your center — medium ⚠ danger,False,1,21.75
+1776139115.0723,39,Person on your center — medium ⚠ danger,False,1,22.53
+1776139115.1187,40,Person on your center — medium ⚠ danger,False,1,21.55
+1776139115.1668,41,Person on your center — medium ⚠ danger,False,1,20.8
+1776139115.2141,42,Path clear,True,0,21.13
+1776139115.2617,43,Person on your center — medium ⚠ danger,False,1,21.02
+1776139115.3097,44,Person on your center — medium ⚠ danger,False,1,20.83
+1776139115.3579,45,Path clear,True,0,20.75
+1776139115.4032,46,Path clear,True,0,22.08
+1776139115.4485,47,Path clear,True,0,22.08
+1776139115.4963,48,Path clear,True,0,20.9
+1776139115.542,49,Person on your center — medium ⚠ danger,False,1,21.88
+1776139115.5877,50,Person on your right — medium ⚠ danger. Also: person center,False,2,21.89
+1776139115.6346,51,Person on your center — medium ⚠ danger. Also: person right,False,2,21.31
+1776139115.6794,52,Person on your center — medium ⚠ danger. Also: person right,False,2,22.32
+1776139115.7264,53,Person on your center — medium ⚠ danger. Also: person right,False,2,21.3
+1776139115.7739,54,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.06
+1776139115.8206,55,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.43
+1776139115.8686,56,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,20.81
+1776139115.9145,57,Person on your center — medium ⚠ danger. Also: person right,False,2,21.78
+1776139115.9597,58,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,22.14
+1776139116.0046,59,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,22.28
+1776139116.0505,60,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.76
+1776139116.0948,61,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,22.58
+1776139116.14,62,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,22.15
+1776139116.1869,63,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.31
+1776139116.2338,64,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.34
+1776139116.2834,65,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,20.15
+1776139116.3317,66,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,20.69
+1776139116.3805,67,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,20.48
+1776139116.431,68,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,19.83
+1776139116.4792,69,Person moving away on your center — medium ⚠ danger,False,1,20.74
+1776139116.5309,70,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,19.33
+1776139116.5788,71,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,20.91
+1776139116.627,72,Person on your center — medium ⚠ danger. Also: person right,False,2,20.74
+1776139116.6757,73,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,20.54
+1776139116.7249,74,Person on your center — medium ⚠ danger. Also: person right,False,2,20.29
+1776139116.7741,75,Person on your center — medium ⚠ danger. Also: person right,False,2,20.32
+1776139116.822,76,Person moving away on your center — medium ⚠ danger,False,1,20.88
+1776139116.8698,77,Person on your center — medium ⚠ danger,False,1,20.94
+1776139116.914,78,Person on your center — medium ⚠ danger,False,1,22.59
+1776139116.9569,79,Path clear,True,0,23.34
+1776139117.0394,80,Path clear,True,0,12.11
+1776139117.085,81,Path clear,True,0,21.95
+1776139117.1294,82,Person approaching on your center — close ⚠ danger,False,1,22.51
+1776139117.1746,83,Path clear,True,0,22.13
+1776139117.2185,84,Person approaching on your right — close ⚠ danger. Also: person center,False,2,22.77
+1776139117.2666,85,Person approaching on your right — close ⚠ danger. Also: person center,False,2,20.81
+1776139117.3114,86,Person moving away on your right — close ⚠ danger,False,1,22.31
+1776139117.3636,87,Person on your right — close ⚠ danger,False,1,19.18
+1776139117.4138,88,Person approaching on your right — medium ⚠ danger,False,1,19.91
+1776139117.4608,89,Person on your right — medium ⚠ danger,False,1,21.24
+1776139117.506,90,Person approaching on your center — medium ⚠ danger. Also: person right,False,2,22.16
+1776139117.5534,91,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.11
+1776139117.5988,92,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,22.01
+1776139117.6467,93,Person moving away on your right — medium ⚠ danger. Also: person center,False,2,20.88
+1776139117.6922,94,Person on your center — medium ⚠ danger. Also: person right,False,2,21.96
+1776139117.7369,95,Person on your center — medium ⚠ danger. Also: person right,False,2,22.38
+1776139117.7815,96,Person approaching on your right — close ⚠ danger. Also: person center,False,2,22.4
+1776139117.8278,97,Person approaching on your right — close ⚠ danger. Also: person center,False,2,21.61
+1776139117.8739,98,Person on your right — medium ⚠ danger,False,1,21.71
+1776139117.9192,99,Person moving away on your right — medium ⚠ danger,False,1,22.05
+1776139117.966,100,Person on your right — medium ⚠ danger,False,1,21.39
+1776139118.0133,101,Person moving away on your right — medium ⚠ danger,False,1,21.12
+1776139118.0616,102,Person on your right — medium ⚠ danger,False,1,20.74
+1776139118.1105,103,Person on your right — medium ⚠ danger,False,1,20.44
+1776139118.1551,104,Person approaching on your center — close ⚠ danger,False,1,22.39
+1776139118.2025,105,Person approaching on your right — close ⚠ danger,False,1,21.09
+1776139118.2508,106,Person approaching on your center — close ⚠ danger,False,1,20.71
+1776139118.2977,107,Path clear,True,0,21.31
+1776139118.3468,108,Path clear,True,0,20.4
+1776139118.3964,109,Path clear,True,0,20.16
+1776139118.4441,110,Person approaching on your center — close ⚠ danger,False,1,20.95
+1776139118.4934,111,Person approaching on your center — close ⚠ danger,False,1,20.28
+1776139118.542,112,Person on your center — close ⚠ danger,False,1,20.58
+1776139118.5888,113,Person on your center — close ⚠ danger,False,1,21.36
+1776139118.6331,114,Person on your center — close ⚠ danger,False,1,22.57
+1776139118.6784,115,Person on your center — close ⚠ danger,False,1,22.1
+1776139118.7224,116,Person on your center — close ⚠ danger,False,1,22.74
+1776139118.767,117,Person on your center — close ⚠ danger. Also: person right,False,2,22.4
+1776139118.8126,118,Person on your center — close ⚠ danger,False,1,21.94
+1776139118.8585,119,Person on your center — close ⚠ danger,False,1,21.77
+1776139118.905,120,Person on your center — close ⚠ danger,False,1,21.52
+1776139118.9496,121,Person on your center — close ⚠ danger,False,1,22.41
+1776139118.9988,122,Person approaching on your center — close ⚠ danger,False,1,20.33
+1776139119.0498,123,Person approaching on your center — close ⚠ danger,False,1,19.6
+1776139119.0956,124,Person approaching on your center — close ⚠ danger,False,1,21.82
+1776139119.1441,125,Person approaching on your center — close ⚠ danger,False,1,20.62
+1776139119.2281,126,Path clear,True,0,11.91
+1776139119.2763,127,Person approaching on your center — close ⚠ danger,False,1,20.72
+1776139119.323,128,Person on your center — close ⚠ danger,False,1,21.41
+1776139119.3684,129,Path clear,True,0,22.02
+1776139119.4169,130,Person on your center — close ⚠ danger,False,1,20.64
+1776139119.4645,131,Person moving away on your center — close ⚠ danger,False,1,21.02
+1776139119.5099,132,Person moving away on your center — close ⚠ danger. Also: person center,False,2,22.03
+1776139119.5564,133,Person moving away on your center — close ⚠ danger. Also: person center,False,2,21.51
+1776139119.6014,134,Person on your center — close ⚠ danger,False,1,22.22
+1776139119.6527,135,Person on your center — close ⚠ danger. Also: person center,False,2,19.48
+1776139119.7009,136,Person on your center — close ⚠ danger. Also: person center,False,2,20.75
+1776139119.7486,137,Person approaching on your center — close ⚠ danger,False,1,20.95
+1776139119.7975,138,Person approaching on your center — close ⚠ danger,False,1,20.44
+1776139119.8446,139,Person moving away on your center — close ⚠ danger,False,1,21.25
+1776139119.8904,140,Path clear,True,0,21.85
+1776139119.9375,141,Person approaching on your center — close ⚠ danger,False,1,21.2
+1776139119.9865,142,Person on your center — close ⚠ danger,False,1,20.42
+1776139120.0329,143,Person on your center — close ⚠ danger,False,1,21.54
+1776139120.0822,144,Person on your center — close ⚠ danger,False,1,20.29
+1776139120.1306,145,Person approaching on your center — close ⚠ danger,False,1,20.66
+1776139120.1778,146,Path clear,True,0,21.2
+1776139120.2234,147,Path clear,True,0,21.9
+1776139120.2737,148,Path clear,True,0,19.88
+1776139120.3196,149,Path clear,True,0,21.82
+1776139120.3693,150,Path clear,True,0,20.1
+1776139120.4159,151,Path clear,True,0,21.47
+1776139120.4608,152,Path clear,True,0,22.27
+1776139120.5062,153,Path clear,True,0,22.02
+1776139120.5496,154,Person moving away on your center — close ⚠ danger,False,1,23.03
+1776139120.5955,155,Person moving away on your center — close ⚠ danger,False,1,21.82
+1776139120.6396,156,Path clear,True,0,22.67
+1776139120.6841,157,Path clear,True,0,22.47
+1776139120.7304,158,Path clear,True,0,21.6
+1776139120.7748,159,Path clear,True,0,22.53
+1776139120.8194,160,Path clear,True,0,22.42
+1776139120.8631,161,Path clear,True,0,22.84
+1776139120.9101,162,Path clear,True,0,21.29
+1776139120.9554,163,Path clear,True,0,22.1
+1776139120.9999,164,Path clear,True,0,22.47
+1776139121.0441,165,Path clear,True,0,22.58
+1776139121.0897,166,Path clear,True,0,21.93
+1776139121.1336,167,Path clear,True,0,22.8
+1776139121.1791,168,Path clear,True,0,21.99
+1776139121.2241,169,Path clear,True,0,22.23
+1776139121.2685,170,Path clear,True,0,22.5
+1776139121.3124,171,Path clear,True,0,22.81
+1776139121.3956,172,Path clear,True,0,12.02
+1776139121.4407,173,Path clear,True,0,22.14
+1776139121.4844,174,Path clear,True,0,22.92
+1776139121.5322,175,Path clear,True,0,20.92
+1776139121.5786,176,Path clear,True,0,21.51
+1776139121.6255,177,Path clear,True,0,21.36
+1776139121.672,178,Path clear,True,0,21.49
+1776139121.7198,179,Person moving away on your center — medium ⚠ danger,False,1,20.92
+1776139121.7673,180,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.05
+1776139121.8146,181,Person moving away on your center — medium ⚠ danger. Also: person right,False,2,21.16
+1776139121.8605,182,Path clear,True,0,21.75
+1776139121.9091,183,Path clear,True,0,20.57
+1776139121.9548,184,Path clear,True,0,21.91
+1776139121.9993,185,Path clear,True,0,22.47
+1776139122.0441,186,Path clear,True,0,22.33
+1776139122.0899,187,Path clear,True,0,21.82
+1776139122.1341,188,Path clear,True,0,22.63
+1776139122.1805,189,Path clear,True,0,21.56
+1776139122.2276,190,Path clear,True,0,21.22
+1776139122.274,191,Person approaching on your center — close ⚠ danger,False,1,21.55
+1776139122.3219,192,Person approaching on your center — close ⚠ danger. Also: person center,False,2,20.88
+1776139122.3694,193,Person approaching on your center — close ⚠ danger,False,1,21.03
+1776139122.4198,194,Person approaching on your center — close ⚠ danger,False,1,19.85
+1776139122.4667,195,Person approaching on your center — close ⚠ danger. Also: person center,False,2,21.35
+1776139122.5138,196,Person moving away on your center — close ⚠ danger. Also: person center,False,2,21.2
+1776139122.5641,197,Person approaching on your center — close ⚠ danger,False,1,19.89
+1776139122.6131,198,Person on your center — close ⚠ danger,False,1,20.42
+1776139122.6615,199,Person approaching on your center — close ⚠ danger,False,1,20.65
+1776139122.7097,200,Person approaching on your center — close ⚠ danger,False,1,20.77
+1776139122.7618,201,Person on your center — close ⚠ danger,False,1,19.16
+1776139122.8093,202,Person on your center — close ⚠ danger,False,1,21.08
+1776139122.862,203,Person on your center — close ⚠ danger. Also: bed center,False,2,18.98
+1776139122.9087,204,Person on your center — close ⚠ danger,False,1,21.39
+1776139122.9554,205,Person moving away on your center — close ⚠ danger,False,1,21.4
+1776139123.0011,206,Person moving away on your center — close ⚠ danger. Also: pizza center,False,2,21.89
+1776139123.051,207,Person moving away on your center — close ⚠ danger. Also: pizza center,False,2,20.06
+1776139123.0996,208,Person moving away on your center — close ⚠ danger,False,1,20.59
+1776139123.1487,209,Person moving away on your center — close ⚠ danger,False,1,20.35
+1776139123.1971,210,Person on your center — close ⚠ danger,False,1,20.65
+1776139123.2465,211,Person on your center — close ⚠ danger,False,1,20.27
+1776139123.2937,212,Person approaching on your center — close ⚠ danger,False,1,21.15
+1776139123.3393,213,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,21.95
+1776139123.387,214,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,20.98
+1776139123.4339,215,Person approaching on your center — close ⚠ danger,False,1,21.31
+1776139123.4818,216,Person on your center — close ⚠ danger,False,1,20.85
+1776139123.5688,217,Person moving away on your center — close ⚠ danger,False,1,11.5
+1776139123.6147,218,Person moving away on your center — close ⚠ danger. Also: pizza center,False,2,21.79
+1776139123.6601,219,Person on your center — close ⚠ danger. Also: pizza center,False,2,22.0
+1776139123.7067,220,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.47
+1776139123.7513,221,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,22.43
+1776139123.7988,222,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,21.03
+1776139123.8461,223,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,21.17
+1776139123.8913,224,Person on your center — close ⚠ danger. Also: pizza center,False,2,22.09
+1776139123.9385,225,Person moving away on your center — close ⚠ danger,False,1,21.21
+1776139123.9866,226,Person moving away on your center — close ⚠ danger,False,1,20.8
+1776139124.0326,227,Person moving away on your center — close ⚠ danger,False,1,21.71
+1776139124.0792,228,Person on your center — close ⚠ danger,False,1,21.45
+1776139124.1248,229,Person on your center — close ⚠ danger,False,1,21.96
+1776139124.1718,230,Person approaching on your center — close ⚠ danger,False,1,21.25
+1776139124.2182,231,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,21.57
+1776139124.2674,232,"Person approaching on your center — close ⚠ danger. Also: person center, pizza center",False,3,20.31
+1776139124.3167,233,"Person on your center — close ⚠ danger. Also: person center, pizza center",False,3,20.32
+1776139124.3638,234,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.21
+1776139124.4126,235,Person on your center — close ⚠ danger,False,1,20.49
+1776139124.4598,236,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,21.17
+1776139124.5094,237,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.17
+1776139124.5573,238,Person approaching on your center — close ⚠ danger. Also: pizza center,False,2,20.87
+1776139124.6046,239,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.17
+1776139124.6526,240,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.84
+1776139124.6965,241,Person on your center — close ⚠ danger. Also: pizza center,False,2,22.78
+1776139124.746,242,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.19
+1776139124.7941,243,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.8
+1776139124.8386,244,Person on your center — close ⚠ danger. Also: pizza center,False,2,22.47
+1776139124.884,245,Person on your center — close ⚠ danger. Also: pizza center,False,2,22.03
+1776139124.9349,246,Person on your center — close ⚠ danger. Also: pizza center,False,2,19.61
+1776139124.9835,247,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.58
+1776139125.03,248,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.5
+1776139125.0763,249,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.59
+1776139125.128,250,Person on your center — close ⚠ danger. Also: pizza center,False,2,19.37
+1776139125.1752,251,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.19
+1776139125.2177,252,Person on your center — close ⚠ danger. Also: pizza center,False,2,23.5
+1776139125.3048,253,Person on your center — close ⚠ danger. Also: pizza center,False,2,11.48
+1776139125.3516,254,Person on your center — close ⚠ danger,False,1,21.36
+1776139125.4015,255,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.07
+1776139125.4514,256,Person on your center — close ⚠ danger. Also: pizza center,False,2,20.03
+1776139125.4978,257,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.55
+1776139125.5448,258,Person on your center — close ⚠ danger. Also: pizza center,False,2,21.28
+1776139125.5897,259,Person on your center — close ⚠ danger. Also: pizza center,False,2,22.26
+1776139125.6364,260,Person on your center — close ⚠ danger,False,1,21.43
+1776139125.6831,261,Person on your center — close ⚠ danger,False,1,21.38
+1776139125.732,262,Person on your center — close ⚠ danger,False,1,20.46
+1776139125.7811,263,Person on your center — close ⚠ danger,False,1,20.39
+1776139125.8288,264,Person on your center — close ⚠ danger,False,1,20.96
+1776139125.8816,265,Person on your center — close ⚠ danger,False,1,18.93
+1776139125.9272,266,Person on your center — close ⚠ danger,False,1,21.93
+1776139125.9725,267,Person on your center — close ⚠ danger,False,1,22.09
+1776139126.0191,268,Person on your center — close ⚠ danger,False,1,21.46
+1776139126.0671,269,Person on your center — close ⚠ danger,False,1,20.82
+1776139126.1166,270,Person on your center — close ⚠ danger,False,1,20.2
+1776139126.1645,271,Person on your center — close ⚠ danger. Also: dining table center,False,2,20.89
+1776139126.2116,272,Person on your center — close ⚠ danger,False,1,21.24
+1776139126.2604,273,Person on your center — close ⚠ danger,False,1,20.47
+1776139126.3071,274,Person on your center — close ⚠ danger,False,1,21.43
+1776139126.3515,275,Person on your center — close ⚠ danger,False,1,22.49
+1776139126.4012,276,Person on your center — close ⚠ danger,False,1,20.16
+1776139126.4466,277,Person on your center — close ⚠ danger,False,1,22.03
+1776139126.4933,278,Person on your center — close ⚠ danger,False,1,21.38
+1776139126.538,279,Person on your center — close ⚠ danger,False,1,22.38
+1776139126.5854,280,Person on your center — close ⚠ danger,False,1,21.1
+1776139126.6347,281,Person on your center — close ⚠ danger,False,1,20.3
+1776139126.6826,282,Person on your center — close ⚠ danger. Also: dining table center,False,2,20.86
+1776139126.7313,283,Person on your center — close ⚠ danger,False,1,20.54
+1776139126.7814,284,Person on your center — close ⚠ danger,False,1,19.98
+1776139126.8289,285,Person on your center — close ⚠ danger,False,1,21.02
+1776139126.8784,286,Person on your center — close ⚠ danger,False,1,20.24
+1776139126.9253,287,Person on your center — close ⚠ danger,False,1,21.29
+1776139126.9707,288,Person on your center — close ⚠ danger,False,1,22.06
+1776139127.0176,289,Person on your center — close ⚠ danger,False,1,21.3
+1776139127.0643,290,Person on your center — close ⚠ danger,False,1,21.44
+1776139127.1128,291,Person on your center — close ⚠ danger,False,1,20.59
+1776139127.1599,292,Person on your center — close ⚠ danger,False,1,21.26
+1776139127.2061,293,Person on your center — close ⚠ danger,False,1,21.63
+1776139127.2523,294,Person on your center — close ⚠ danger,False,1,21.66
+1776139127.2985,295,Person on your center — close ⚠ danger,False,1,21.65
+1776139127.3449,296,Person on your center — close ⚠ danger,False,1,21.54
+1776139127.3979,297,Person on your center — close ⚠ danger,False,1,18.86
+1776139127.4866,298,Person on your center — close ⚠ danger,False,1,11.28
+1776139127.5351,299,Person on your center — close ⚠ danger,False,1,20.63
+1776139127.5809,300,Person on your center — close ⚠ danger,False,1,21.84
+1776139127.6281,301,Person on your center — close ⚠ danger,False,1,21.15
+1776139127.6753,302,Person on your center — close ⚠ danger,False,1,21.2
+1776139127.7208,303,Person on your center — close ⚠ danger,False,1,21.99
+1776139127.7658,304,Person on your center — close ⚠ danger,False,1,22.24
+1776139127.8131,305,Person on your center — close ⚠ danger,False,1,21.11
+1776139127.8611,306,Person on your center — close ⚠ danger,False,1,20.84
+1776139127.9118,307,Person on your center — close ⚠ danger,False,1,19.74
+1776139127.9589,308,Person on your center — close ⚠ danger,False,1,21.23
+1776139128.006,309,Person on your center — close ⚠ danger,False,1,21.21
+1776139128.0519,310,Person on your center — close ⚠ danger,False,1,21.79
+1776139128.0979,311,Person moving away on your center — close ⚠ danger. Also: dining table center,False,2,21.75
+1776139128.1467,312,Person on your center — close ⚠ danger. Also: bed center,False,2,20.48
+1776139128.1958,313,Person on your center — close ⚠ danger,False,1,20.39
+1776139128.2445,314,Person on your center — close ⚠ danger,False,1,20.53
+1776139128.2983,315,Person on your center — close ⚠ danger,False,1,18.58
+1776139128.3456,316,Person on your center — close ⚠ danger,False,1,21.16
+1776139128.3927,317,Person moving away on your center — close ⚠ danger,False,1,21.24
+1776139128.4387,318,Person moving away on your center — close ⚠ danger,False,1,21.7
+1776139128.4849,319,Person moving away on your center — close ⚠ danger,False,1,21.64
+1776139128.5342,320,Person moving away on your center — close ⚠ danger,False,1,20.31
+1776139128.5898,321,Person on your center — close ⚠ danger,False,1,17.98
+1776139128.6392,322,Person on your center — close ⚠ danger,False,1,20.24
+1776139128.6875,323,Person on your center — close ⚠ danger,False,1,20.7
+1776139128.7378,324,Person approaching on your center — close ⚠ danger,False,1,19.89
+1776139128.7849,325,Person approaching on your center — close ⚠ danger,False,1,21.2
+1776139128.8357,326,Person approaching on your center — close ⚠ danger,False,1,19.69
+1776139128.8837,327,Person on your center — close ⚠ danger. Also: dining table center,False,2,20.83
+1776139128.9309,328,Person on your center — close ⚠ danger,False,1,21.19
+1776139128.9854,329,Person on your center — close ⚠ danger,False,1,18.36
+1776139129.0347,330,Person on your center — close ⚠ danger,False,1,20.29
+1776139129.0852,331,Person on your center — close ⚠ danger,False,1,19.81
+1776139129.1349,332,Person on your center — close ⚠ danger,False,1,20.11
+1776139129.1828,333,Person approaching on your center — close ⚠ danger,False,1,20.86
+1776139129.2315,334,Person on your center — close ⚠ danger,False,1,20.54
+1776139129.2774,335,Person on your center — close ⚠ danger,False,1,21.81
+1776139129.3224,336,Path clear,True,0,22.2
+1776139129.3702,337,Path clear,True,0,20.95
+1776139129.4164,338,Path clear,True,0,21.65
+1776139129.4677,339,Path clear,True,0,19.46
+1776139129.5125,340,Path clear,True,0,22.33
+1776139129.5973,341,Path clear,True,0,11.79
+1776139129.64,342,Path clear,True,0,23.47
+1776139129.6846,343,Path clear,True,0,22.37
+1776139129.7319,344,Path clear,True,0,21.17
+1776139129.7782,345,Path clear,True,0,21.61
+1776139129.8269,346,Path clear,True,0,20.53
+1776139129.882,347,Path clear,True,0,18.13
+1776139129.9344,348,Path clear,True,0,19.08
+1776139129.9857,349,Path clear,True,0,19.5
+1776139130.0375,350,Path clear,True,0,19.32
+1776139130.0816,351,Path clear,True,0,22.69
+1776139130.1277,352,Path clear,True,0,21.67
+1776139130.1726,353,Path clear,True,0,22.25
+1776139130.2181,354,Path clear,True,0,22.01
+1776139130.2658,355,Path clear,True,0,20.96
+1776139130.3133,356,Path clear,True,0,21.03
+1776139130.3615,357,Path clear,True,0,20.75
+1776139130.4089,358,Path clear,True,0,21.09
+1776139130.4554,359,Path clear,True,0,21.5
+1776139130.4989,360,Path clear,True,0,23.02
+1776139130.5451,361,Path clear,True,0,21.65
+1776139130.5893,362,Path clear,True,0,22.6
+1776139130.6352,363,Path clear,True,0,21.81
+1776139130.6851,364,Path clear,True,0,20.01
+1776139130.735,365,Path clear,True,0,20.04
+1776139130.7966,366,Path clear,True,0,16.25
+1776139130.8546,367,Path clear,True,0,17.23
+1776139130.9128,368,Path clear,True,0,17.19
+1776139130.9647,369,Path clear,True,0,19.28
+1776139131.0174,370,Person moving away on your right — medium ⚠ danger,False,1,18.96
+1776139131.0678,371,Vase on your center — close,True,1,19.83
+1776139131.1171,372,Vase on your center — close,True,1,20.29
+1776139131.1696,373,Person approaching on your center — close ⚠ danger. Also: person right,False,2,19.04
+1776139131.2186,374,Person approaching on your center — close ⚠ danger,False,1,20.42
+1776139131.266,375,Person approaching on your center — close ⚠ danger,False,1,21.12
+1776139131.3108,376,Person approaching on your center — close ⚠ danger,False,1,22.33
+1776139131.3556,377,Path clear,True,0,22.32
+1776139131.4001,378,Person moving away on your center — close ⚠ danger,False,1,22.45
+1776139131.4477,379,Person approaching on your center — close ⚠ danger,False,1,20.99
+1776139131.4941,380,Person moving away on your center — close ⚠ danger,False,1,21.56
+1776139131.5401,381,Person moving away on your center — close ⚠ danger,False,1,21.75
+1776139131.5838,382,Person moving away on your center — close ⚠ danger,False,1,22.89
+1776139131.6319,383,Person approaching on your center — close ⚠ danger,False,1,20.78
+1776139131.6796,384,Person approaching on your center — close ⚠ danger,False,1,20.97
+1776139131.7983,385,Person approaching on your center — close ⚠ danger,False,1,8.42
+1776139131.8442,386,Person approaching on your center — close ⚠ danger,False,1,21.81
+1776139131.8887,387,Person approaching on your center — close ⚠ danger,False,1,22.46
+1776139131.933,388,Person on your center — close ⚠ danger,False,1,22.54
+1776139131.9814,389,Person on your center — close ⚠ danger,False,1,20.68
+1776139132.0295,390,Person on your center — close ⚠ danger,False,1,20.79
+1776139132.0804,391,Person on your center — close ⚠ danger,False,1,19.63
+1776139132.1269,392,Person on your center — close ⚠ danger,False,1,21.51
+1776139132.1708,393,Person on your center — close ⚠ danger,False,1,22.8
+1776139132.2152,394,Person on your center — close ⚠ danger,False,1,22.52
+1776139132.2614,395,Person on your center — close ⚠ danger,False,1,21.62
+1776139132.3062,396,Person on your center — close ⚠ danger,False,1,22.37
+1776139132.3516,397,Person on your center — close ⚠ danger,False,1,22.0
+1776139132.404,398,Person on your center — close ⚠ danger,False,1,19.08
+1776139132.4488,399,Person on your center — close ⚠ danger,False,1,22.31
+1776139132.4963,400,Person on your center — close ⚠ danger,False,1,21.09
+1776139132.5432,401,Person on your center — close ⚠ danger,False,1,21.28
+1776139132.5906,402,Person on your center — close ⚠ danger,False,1,21.11
+1776139132.6365,403,Person on your center — close ⚠ danger,False,1,21.78
+1776139132.6812,404,Person on your center — close ⚠ danger,False,1,22.37
+1776139132.7301,405,Person on your center — close ⚠ danger,False,1,20.45
+1776139132.7773,406,Person on your center — close ⚠ danger,False,1,21.18
+1776139132.8249,407,Person on your center — close ⚠ danger,False,1,21.02
+1776139132.8711,408,Person on your center — close ⚠ danger,False,1,21.67
+1776139132.9171,409,Person on your center — close ⚠ danger,False,1,21.72
+1776139132.9636,410,Person moving away on your center — close ⚠ danger,False,1,21.51
+1776139133.0101,411,Path clear,True,0,21.48
+1776139133.0565,412,Path clear,True,0,21.57
+1776139133.1023,413,Person moving away on your right — medium ⚠ danger,False,1,21.83
+1776139133.1503,414,Path clear,True,0,20.82
+1776139133.1979,415,Path clear,True,0,21.03
+1776139133.2434,416,Path clear,True,0,21.97
+1776139133.291,417,Path clear,True,0,21.01
+1776139133.3356,418,Path clear,True,0,22.42
+1776139133.3821,419,Path clear,True,0,21.52
+1776139133.4284,420,Path clear,True,0,21.58
+1776139133.4747,421,Path clear,True,0,21.61
+1776139133.5203,422,Path clear,True,0,21.93
+1776139133.5655,423,Path clear,True,0,22.12
+1776139133.6131,424,Path clear,True,0,21.0
+1776139133.6615,425,Path clear,True,0,20.68
+1776139133.7069,426,Path clear,True,0,22.01
+1776139133.7517,427,Path clear,True,0,22.34
+1776139133.7991,428,Path clear,True,0,21.1
+1776139133.845,429,Path clear,True,0,21.77
+1776139133.8904,430,Path clear,True,0,22.03
+1776139133.9331,431,Path clear,True,0,23.41
+1776139134.0198,432,Path clear,True,0,11.53
+1776139134.0649,433,Path clear,True,0,22.18
+1776139134.1119,434,Laptop on your center — close ⚠ danger,False,1,21.3
+1776139134.1586,435,Tv on your right — medium,True,1,21.41
+1776139134.2036,436,Tv on your right — medium,True,1,22.21
+1776139134.2482,437,Path clear,True,0,22.43
+1776139134.2938,438,Path clear,True,0,21.91
+1776139134.3387,439,Path clear,True,0,22.27
+1776139134.383,440,Path clear,True,0,22.59
+1776139134.4281,441,Path clear,True,0,22.14
+1776139134.4741,442,Path clear,True,0,21.77
+1776139134.5199,443,Path clear,True,0,21.81
+1776139134.5653,444,Path clear,True,0,22.04
+1776139134.6121,445,Path clear,True,0,21.36
+1776139134.6586,446,Path clear,True,0,21.5
+1776139134.7039,447,Path clear,True,0,22.11
+1776139134.7501,448,Path clear,True,0,21.63
+1776139134.7966,449,Path clear,True,0,21.48
+1776139134.8457,450,Path clear,True,0,20.37
+1776139134.8931,451,Path clear,True,0,21.09
+1776139134.9396,452,Path clear,True,0,21.52
+1776139134.9869,453,Path clear,True,0,21.13
+1776139135.035,454,Path clear,True,0,20.79
+1776139135.0817,455,Path clear,True,0,21.44
+1776139135.1312,456,Path clear,True,0,20.17
+1776139135.1814,457,Path clear,True,0,19.93
+1776139135.2284,458,Path clear,True,0,21.27
+1776139135.2753,459,Path clear,True,0,21.33
+1776139135.3198,460,Vase moving away on your right — close,True,1,22.49
+1776139135.3672,461,Vase moving away on your right — close,True,1,21.11
+1776139135.415,462,Vase moving away on your right — close,True,1,20.88
+1776139135.4628,463,Vase moving away on your right — close,True,1,20.96
+1776139135.5111,464,Path clear,True,0,20.67
+1776139135.5591,465,Path clear,True,0,20.85
+1776139135.6044,466,Path clear,True,0,22.07
+1776139135.6487,467,Path clear,True,0,22.56
+1776139135.6963,468,Vase moving away on your right — close,True,1,21.03
+1776139135.7477,469,Vase moving away on your right — close,True,1,19.44
+1776139135.8068,470,Vase moving away on your right — close,True,1,16.91
+1776139135.8556,471,Path clear,True,0,20.51
+1776139135.9088,472,Vase moving away on your right — close,True,1,18.81
+1776139135.9571,473,Path clear,True,0,20.71
+1776139136.0036,474,Path clear,True,0,21.49
+1776139136.0467,475,Path clear,True,0,23.2
+1776139136.0947,476,Vase moving away on your right — close,True,1,20.84
+1776139136.1848,477,Path clear,True,0,11.1
+1776139136.2317,478,Path clear,True,0,21.34
+1776139136.2788,479,Path clear,True,0,21.23
+1776139136.3264,480,Path clear,True,0,20.98
+1776139136.3729,481,Path clear,True,0,21.52
+1776139136.4175,482,Vase on your right — close,True,1,22.42
+1776139136.4664,483,Vase on your right — close,True,1,20.43
+1776139136.5241,484,Vase on your right — close,True,1,17.34
+1776139136.5732,485,Path clear,True,0,20.38
+1776139136.6189,486,Path clear,True,0,21.86
+1776139136.6656,487,Path clear,True,0,21.44
+1776139136.7124,488,Path clear,True,0,21.35
+1776139136.756,489,Path clear,True,0,22.97
+1776139136.7996,490,Path clear,True,0,22.93
+1776139136.8461,491,Path clear,True,0,21.49
+1776139136.8923,492,Path clear,True,0,21.64
+1776139136.9383,493,Path clear,True,0,21.73
+1776139136.9834,494,Path clear,True,0,22.16
+1776139137.028,495,Path clear,True,0,22.44
+1776139137.077,496,Path clear,True,0,20.43
+1776139137.1212,497,Path clear,True,0,22.61
+1776139137.1655,498,Path clear,True,0,22.54
+1776139137.2112,499,Path clear,True,0,21.88
+1776139137.2566,500,Path clear,True,0,22.02
+1776139137.3021,501,Path clear,True,0,22.02
+1776139137.3496,502,Path clear,True,0,21.04
+1776139137.4015,503,Vase on your right — close,True,1,19.27
+1776139137.4483,504,Vase on your right — close,True,1,21.37
+1776139137.4944,505,Path clear,True,0,21.69
+1776139137.5434,506,Path clear,True,0,20.41
+1776139137.5872,507,Path clear,True,0,22.82
+1776139137.6344,508,Path clear,True,0,21.18
+1776139137.6826,509,Path clear,True,0,20.74
+1776139137.7288,510,Path clear,True,0,21.65
+1776139137.7789,511,Path clear,True,0,19.95
+1776139137.8263,512,Path clear,True,0,21.1
+1776139137.8727,513,Path clear,True,0,21.57
+1776139137.9183,514,Path clear,True,0,21.91
+1776139137.9641,515,Path clear,True,0,21.87
+1776139138.0113,516,Path clear,True,0,21.15
+1776139138.0575,517,Path clear,True,0,21.68
+1776139138.1049,518,Path clear,True,0,21.06
+1776139138.1501,519,Path clear,True,0,22.15
+1776139138.1978,520,Path clear,True,0,20.94
+1776139138.2435,521,Path clear,True,0,21.91
+1776139138.3308,522,Wine glass on your right — medium,True,1,11.45
+1776139138.3823,523,Wine glass on your right — medium,True,1,19.41
+1776139138.4312,524,Wine glass on your right — medium,True,1,20.48
+1776139138.4805,525,Wine glass on your right — medium,True,1,20.28
+1776139138.5276,526,Wine glass on your right — medium,True,1,21.21
+1776139138.5745,527,Wine glass on your right — medium,True,1,21.32
+1776139138.6193,528,Path clear,True,0,22.32
+1776139138.666,529,Path clear,True,0,21.44
+1776139138.7135,530,Path clear,True,0,21.05
+1776139138.7607,531,Path clear,True,0,21.18
+1776139138.8081,532,Path clear,True,0,21.08
+1776139138.8545,533,Path clear,True,0,21.55
+1776139138.8996,534,Path clear,True,0,22.21
+1776139138.946,535,Path clear,True,0,21.55
+1776139138.9933,536,Path clear,True,0,21.13
+1776139139.0386,537,Path clear,True,0,22.06
+1776139139.0845,538,Path clear,True,0,21.81
+1776139139.1319,539,Path clear,True,0,21.08
+1776139139.1791,540,Path clear,True,0,21.19
+1776139139.227,541,Path clear,True,0,20.87
+1776139139.2769,542,Path clear,True,0,20.04
+1776139139.3215,543,Path clear,True,0,22.46
+1776139139.3677,544,Path clear,True,0,21.64
+1776139139.416,545,Path clear,True,0,20.7
+1776139139.4624,546,Path clear,True,0,21.57
+1776139139.5098,547,Path clear,True,0,21.07
+1776139139.5593,548,Path clear,True,0,20.23
+1776139139.6054,549,Person on your center — close ⚠ danger,False,1,21.68
+1776139139.6529,550,Person on your center — close ⚠ danger,False,1,21.05
+1776139139.7001,551,Person on your center — close ⚠ danger,False,1,21.2
+1776139139.7488,552,Person approaching on your center — close ⚠ danger,False,1,20.51
+1776139139.7965,553,Path clear,True,0,20.98
+1776139139.8499,554,Path clear,True,0,18.74
+1776139139.8955,555,Path clear,True,0,21.93
+1776139139.9421,556,Path clear,True,0,21.46
+1776139139.9884,557,Path clear,True,0,21.57
+1776139140.0339,558,Path clear,True,0,21.97
+1776139140.0806,559,Path clear,True,0,21.44
+1776139140.1281,560,Path clear,True,0,21.06
+1776139140.1744,561,Path clear,True,0,21.57
+1776139140.2232,562,Path clear,True,0,20.52
+1776139140.2709,563,Path clear,True,0,20.92
+1776139140.3154,564,Path clear,True,0,22.48
+1776139140.3618,565,Path clear,True,0,21.56
+1776139140.4075,566,Path clear,True,0,21.87
+1776139140.4536,567,Path clear,True,0,21.71
+1776139140.499,568,Path clear,True,0,22.04
+1776139140.5861,569,Path clear,True,0,11.48
+1776139140.6326,570,Path clear,True,0,21.51
+1776139140.6775,571,Path clear,True,0,22.27
+1776139140.7229,572,Path clear,True,0,22.01
+1776139140.7702,573,Path clear,True,0,21.15
+1776139140.8171,574,Path clear,True,0,21.29
+1776139140.8649,575,Path clear,True,0,20.92
+1776139140.9126,576,Path clear,True,0,20.99
+1776139140.9609,577,Path clear,True,0,20.71
+1776139141.0062,578,Path clear,True,0,22.06
+1776139141.0514,579,Path clear,True,0,22.14
+1776139141.0971,580,Path clear,True,0,21.86
+1776139141.1409,581,Path clear,True,0,22.86
+1776139141.1856,582,Path clear,True,0,22.34
+1776139141.2319,583,Path clear,True,0,21.62
+1776139141.2788,584,Bed approaching on your center — close ⚠ danger,False,1,21.32
+1776139141.3272,585,Bed approaching on your center — close ⚠ danger,False,1,20.67
+1776139141.3752,586,Path clear,True,0,20.82
+1776139141.4264,587,Path clear,True,0,19.53
+1776139141.4721,588,Path clear,True,0,21.9
+1776139141.5192,589,Path clear,True,0,21.22
+1776139141.5661,590,Path clear,True,0,21.33
+1776139141.6132,591,Bed approaching on your center — close ⚠ danger,False,1,21.23
+1776139141.661,592,Path clear,True,0,20.92
+1776139141.7096,593,Path clear,True,0,20.58
+1776139141.7581,594,Bed approaching on your center — close ⚠ danger,False,1,20.61
+1776139141.8052,595,Path clear,True,0,21.23
+1776139141.8509,596,Path clear,True,0,21.87
+1776139141.8992,597,Path clear,True,0,20.68
+1776139141.9483,598,Path clear,True,0,20.38
+1776139141.9978,599,Bed approaching on your center — close ⚠ danger,False,1,20.21
+1776139142.0453,600,Path clear,True,0,21.04
+1776139142.0931,601,Path clear,True,0,20.92
+1776139142.14,602,Path clear,True,0,21.32
+1776139142.1835,603,Path clear,True,0,22.99
+1776139142.2291,604,Path clear,True,0,21.93
+1776139142.275,605,Path clear,True,0,21.78
+1776139142.3203,606,Path clear,True,0,22.12
+1776139142.3689,607,Path clear,True,0,20.54
+1776139142.4207,608,Path clear,True,0,19.31
+1776139142.4664,609,Path clear,True,0,21.89
+1776139142.5157,610,Path clear,True,0,20.28
+1776139142.5628,611,Path clear,True,0,21.23
+1776139142.6099,612,Path clear,True,0,21.27
+1776139142.6554,613,Path clear,True,0,21.97
+1776139142.7684,614,Path clear,True,0,8.85
+1776139142.8166,615,Path clear,True,0,20.76
+1776139142.8646,616,Path clear,True,0,20.82
+1776139142.9118,617,Path clear,True,0,21.17
+1776139142.9602,618,Path clear,True,0,20.69
+1776139143.0081,619,Person approaching on your center — close ⚠ danger,False,1,20.88
+1776139143.0561,620,Path clear,True,0,20.83
+1776139143.1104,621,Path clear,True,0,18.41
+1776139143.1635,622,Path clear,True,0,18.84
+1776139143.2128,623,Path clear,True,0,20.29
+1776139143.2606,624,Person approaching on your center — close ⚠ danger,False,1,20.9
+1776139143.3133,625,Person approaching on your center — close ⚠ danger,False,1,18.97
+1776139143.3637,626,Person approaching on your center — close ⚠ danger,False,1,19.83
+1776139143.4158,627,Person on your center — close ⚠ danger,False,1,19.18
+1776139143.463,628,Path clear,True,0,21.21
+1776139143.509,629,Path clear,True,0,21.75
+1776139143.555,630,Path clear,True,0,21.72
+1776139143.5991,631,Path clear,True,0,22.71
+1776139143.6449,632,Path clear,True,0,21.83
+1776139143.6997,633,Path clear,True,0,18.25
+1776139143.7464,634,Person on your center — close ⚠ danger,False,1,21.4
+1776139143.7946,635,Path clear,True,0,20.76
+1776139143.8405,636,Path clear,True,0,21.77
+1776139143.8875,637,Bed moving away on your center — medium ⚠ danger,False,1,21.26
+1776139143.9343,638,Path clear,True,0,21.4
+1776139143.982,639,Path clear,True,0,20.97
+1776139144.0312,640,Path clear,True,0,20.29
+1776139144.0772,641,Path clear,True,0,21.77
+1776139144.1235,642,Path clear,True,0,21.57
+1776139144.1697,643,Path clear,True,0,21.67
+1776139144.214,644,Path clear,True,0,22.55
+1776139144.26,645,Path clear,True,0,21.76
+1776139144.3049,646,Path clear,True,0,22.28
+1776139144.3494,647,Path clear,True,0,22.45
+1776139144.3996,648,Path clear,True,0,19.93
+1776139144.4495,649,Path clear,True,0,20.05
+1776139144.4963,650,Path clear,True,0,21.34
+1776139144.5467,651,Path clear,True,0,19.86
+1776139144.594,652,Path clear,True,0,21.14
+1776139144.6384,653,Bed approaching on your center — close ⚠ danger,False,1,22.52
+1776139144.6839,654,Path clear,True,0,21.97
+1776139144.7341,655,Path clear,True,0,19.94
+1776139144.784,656,Path clear,True,0,20.04
+1776139144.8322,657,Umbrella on your center — medium,True,1,20.75
+1776139144.8821,658,Umbrella on your center — medium,True,1,20.02
+1776139144.9667,659,Umbrella moving away on your center — medium,True,1,11.82
+1776139145.0163,660,Umbrella moving away on your right — medium,True,1,20.18
+1776139145.0707,661,Person moving away on your left — far. Also: umbrella right,True,2,18.38
+1776139145.1227,662,Umbrella moving away on your right — medium,True,1,19.25
+1776139145.1677,663,Path clear,True,0,22.19
+1776139145.2138,664,Path clear,True,0,21.69
+1776139145.2604,665,Path clear,True,0,21.47
+1776139145.3092,666,Person moving away on your right — medium ⚠ danger,False,1,20.51
+1776139145.3564,667,Umbrella moving away on your right — far,True,1,21.18
+1776139145.4033,668,Umbrella moving away on your right — far,True,1,21.29
+1776139145.4492,669,Path clear,True,0,21.83
+1776139145.4973,670,Path clear,True,0,20.77
+1776139145.5451,671,Person moving away on your right — medium ⚠ danger,False,1,20.91
+1776139145.5947,672,Person moving away on your right — far,True,1,20.19
+1776139145.6434,673,Path clear,True,0,20.51
+1776139145.6905,674,Path clear,True,0,21.22
+1776139145.7366,675,Umbrella moving away on your right — far,True,1,21.7
+1776139145.7827,676,Path clear,True,0,21.7
+1776139145.8321,677,Path clear,True,0,20.26
+1776139145.879,678,Path clear,True,0,21.29
+1776139145.9254,679,Person moving away on your left — far,True,1,21.59
+1776139145.9713,680,Person approaching on your left — far,True,1,21.75
+1776139146.019,681,Person moving away on your left — far,True,1,21.0
+1776139146.067,682,Path clear,True,0,20.81
+1776139146.1302,683,Path clear,True,0,15.84
+1776139146.1766,684,Path clear,True,0,21.53
+1776139146.2274,685,Person on your left — medium ⚠ danger,False,1,19.69
+1776139146.2719,686,Path clear,True,0,22.49
+1776139146.3174,687,Path clear,True,0,21.96
+1776139146.3639,688,Path clear,True,0,21.53
+1776139146.4106,689,Path clear,True,0,21.37
+1776139146.4564,690,Path clear,True,0,21.83
+1776139146.5007,691,Path clear,True,0,22.61
+1776139146.5463,692,Path clear,True,0,21.92
+1776139146.5918,693,Path clear,True,0,21.99
+1776139146.6389,694,Path clear,True,0,21.24
+1776139146.6846,695,Path clear,True,0,21.86
+1776139146.7312,696,Path clear,True,0,21.47
+1776139146.7783,697,Path clear,True,0,21.24
+1776139146.8261,698,Path clear,True,0,20.9
+1776139146.8709,699,Path clear,True,0,22.33
+1776139146.9169,700,Path clear,True,0,21.73
+1776139146.9619,701,Path clear,True,0,22.25
+1776139147.0088,702,Path clear,True,0,21.32
+1776139147.0559,703,Person approaching on your right — medium ⚠ danger,False,1,21.21
+1776139147.1559,704,Path clear,True,0,10.01
+1776139147.2038,705,Path clear,True,0,20.85
+1776139147.2491,706,Person approaching on your right — medium ⚠ danger,False,1,22.1
+1776139147.2942,707,Person approaching on your right — medium ⚠ danger,False,1,22.16
+1776139147.341,708,Person approaching on your right — medium ⚠ danger,False,1,21.37
+1776139147.3926,709,Person approaching on your right — medium ⚠ danger,False,1,19.39
+1776139147.4411,710,Person on your right — medium ⚠ danger,False,1,20.58
+1776139147.4884,711,Person on your right — medium ⚠ danger,False,1,21.13
+1776139147.5348,712,Person on your right — medium ⚠ danger. Also: chair left,False,2,21.55
+1776139147.5832,713,Person on your right — medium ⚠ danger,False,1,20.69
+1776139147.6319,714,Person on your right — medium ⚠ danger,False,1,20.54
+1776139147.6801,715,Person on your right — medium ⚠ danger,False,1,20.75
+1776139147.7268,716,Person on your right — medium ⚠ danger,False,1,21.41
+1776139147.7732,717,Person on your right — medium ⚠ danger,False,1,21.55
+1776139147.8177,718,Person on your right — medium ⚠ danger,False,1,22.44
+1776139147.8672,719,Path clear,True,0,20.22
+1776139147.915,720,Path clear,True,0,20.93
+1776139147.9625,721,Chair on your left — medium ⚠ danger,False,1,21.04
+1776139148.0123,722,Chair on your left — medium ⚠ danger,False,1,20.09
+1776139148.06,723,Chair on your left — medium ⚠ danger,False,1,20.95
+1776139148.1053,724,Chair on your left — medium ⚠ danger,False,1,22.08
+1776139148.1497,725,Chair on your left — medium ⚠ danger,False,1,22.54
+1776139148.1979,726,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.74
+1776139148.2468,727,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.43
+1776139148.2946,728,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.94
+1776139148.342,729,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.09
+1776139148.3868,730,Person on your right — medium ⚠ danger. Also: person center,False,2,22.31
+1776139148.4329,731,Path clear,True,0,21.69
+1776139148.4818,732,Path clear,True,0,20.45
+1776139148.532,733,Chair on your left — medium ⚠ danger,False,1,19.95
+1776139148.58,734,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.82
+1776139148.6284,735,Chair on your left — medium ⚠ danger,False,1,20.66
+1776139148.6766,736,Chair on your left — medium ⚠ danger,False,1,20.76
+1776139148.7215,737,Chair on your left — medium ⚠ danger,False,1,22.24
+1776139148.7674,738,Chair on your left — medium ⚠ danger,False,1,21.8
+1776139148.8147,739,Chair on your left — medium ⚠ danger,False,1,21.13
+1776139148.8633,740,Chair on your left — medium ⚠ danger,False,1,20.59
+1776139148.911,741,Chair on your left — medium ⚠ danger,False,1,20.99
+1776139148.9573,742,Chair on your left — medium ⚠ danger,False,1,21.58
+1776139149.007,743,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.13
+1776139149.0556,744,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.58
+1776139149.1039,745,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.68
+1776139149.1521,746,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.77
+1776139149.201,747,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.41
+1776139149.2481,748,Chair on your left — medium ⚠ danger,False,1,21.26
+1776139149.3342,749,Chair on your left — medium ⚠ danger. Also: person right,False,2,11.61
+1776139149.3813,750,Person on your right — medium ⚠ danger. Also: chair left,False,2,21.23
+1776139149.4275,751,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.67
+1776139149.4729,752,Chair on your left — medium ⚠ danger. Also: person right,False,2,22.03
+1776139149.5208,753,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.85
+1776139149.5724,754,Person on your right — medium ⚠ danger. Also: chair left,False,2,19.37
+1776139149.6219,755,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.21
+1776139149.6723,756,Person on your right — medium ⚠ danger. Also: chair left,False,2,19.85
+1776139149.7204,757,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.77
+1776139149.7693,758,Person on your right — medium ⚠ danger. Also: chair left,False,2,20.46
+1776139149.82,759,Person on your right — medium ⚠ danger. Also: chair left,False,2,19.73
+1776139149.8681,760,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.78
+1776139149.9148,761,Chair on your left — medium ⚠ danger,False,1,21.41
+1776139149.9613,762,Chair on your left — medium ⚠ danger,False,1,21.54
+1776139150.0097,763,Chair on your left — medium ⚠ danger,False,1,20.64
+1776139150.0586,764,Chair on your left — medium ⚠ danger,False,1,20.44
+1776139150.1053,765,Chair on your left — medium ⚠ danger,False,1,21.4
+1776139150.1524,766,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.23
+1776139150.1991,767,Chair on your left — medium ⚠ danger,False,1,21.45
+1776139150.2455,768,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.53
+1776139150.292,769,Chair on your left — medium ⚠ danger,False,1,21.49
+1776139150.3387,770,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.44
+1776139150.3857,771,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.29
+1776139150.4337,772,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.82
+1776139150.4824,773,Chair on your left — medium ⚠ danger,False,1,20.55
+1776139150.5717,774,Chair on your left — medium ⚠ danger,False,1,11.19
+1776139150.6185,775,Chair on your left — medium ⚠ danger,False,1,21.37
+1776139150.6653,776,Chair on your left — medium ⚠ danger,False,1,21.37
+1776139150.7114,777,Chair on your left — medium ⚠ danger,False,1,21.7
+1776139150.7616,778,Chair on your left — medium ⚠ danger,False,1,19.92
+1776139150.8069,779,Chair on your left — medium ⚠ danger,False,1,22.06
+1776139150.8539,780,Chair on your left — medium ⚠ danger,False,1,21.28
+1776139150.9008,781,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.35
+1776139150.9501,782,Chair on your left — medium ⚠ danger. Also: person right,False,2,20.29
+1776139150.9966,783,Person on your right — medium ⚠ danger. Also: chair left,False,2,21.47
+1776139151.042,784,Chair on your left — medium ⚠ danger. Also: person right,False,2,22.03
+1776139151.0883,785,Chair on your left — medium ⚠ danger. Also: person right,False,2,21.62
+1776139151.1348,786,Path clear,True,0,21.51
+1776139151.183,787,Path clear,True,0,20.76
+1776139151.2302,788,Path clear,True,0,21.17
+1776139151.2774,789,Person on your left — medium ⚠ danger,False,1,21.18
+1776139151.3265,790,Person on your left — medium ⚠ danger,False,1,20.37
+1776139151.373,791,Person on your left — medium ⚠ danger,False,1,21.53
+1776139151.4202,792,Person moving away on your left — medium ⚠ danger,False,1,21.18
+1776139151.467,793,Person moving away on your left — medium ⚠ danger. Also: bottle center,False,2,21.35
+1776139151.5159,794,Person moving away on your left — medium ⚠ danger. Also: bottle center,False,2,20.44
+1776139151.5667,795,Person moving away on your left — medium ⚠ danger,False,1,19.69
+1776139151.617,796,Person on your left — medium ⚠ danger,False,1,19.89
+1776139151.6648,797,Person on your left — medium ⚠ danger,False,1,20.93
+1776139151.711,798,Person on your left — medium ⚠ danger,False,1,21.65
+1776139151.7561,799,Person on your left — medium ⚠ danger,False,1,22.14
+1776139151.8001,800,Path clear,True,0,22.73
+1776139151.8467,801,Path clear,True,0,21.45
+1776139151.8948,802,Path clear,True,0,20.8
+1776139151.9418,803,Person on your left — medium ⚠ danger,False,1,21.3
+1776139151.9887,804,Person on your left — medium ⚠ danger,False,1,21.31
+1776139152.0354,805,Person on your left — medium ⚠ danger,False,1,21.43
+1776139152.0837,806,Person on your left — medium ⚠ danger,False,1,20.68
+1776139152.132,807,Path clear,True,0,20.71
+1776139152.1807,808,Path clear,True,0,20.52
+1776139152.2289,809,Person on your left — medium ⚠ danger,False,1,20.78
+1776139152.2784,810,Person on your left — medium ⚠ danger,False,1,20.17
+1776139152.3253,811,Person on your left — medium ⚠ danger,False,1,21.35
+1776139152.3764,812,Person on your left — medium ⚠ danger,False,1,19.55
+1776139152.4249,813,Person on your left — medium ⚠ danger,False,1,20.61
+1776139152.468,814,Person on your left — medium ⚠ danger,False,1,23.2
+1776139152.5171,815,Person on your left — medium ⚠ danger. Also: horse right,False,2,20.37
+1776139152.5664,816,Person on your left — medium ⚠ danger. Also: horse right,False,2,20.32
+1776139152.6127,817,Person on your left — medium ⚠ danger. Also: horse right,False,2,21.57
+1776139152.6627,818,Horse on your right — medium,True,1,20.0
+1776139152.7488,819,Bottle on your center — far,True,1,11.61
+1776139152.7978,820,Path clear,True,0,20.45
+1776139152.8451,821,Path clear,True,0,21.14
+1776139152.895,822,Person on your left — medium ⚠ danger,False,1,20.03
+1776139152.9427,823,Path clear,True,0,20.97
+1776139152.9904,824,Path clear,True,0,20.97
+1776139153.0407,825,Path clear,True,0,19.87
+1776139153.1145,826,Person on your left — medium ⚠ danger,False,1,13.55
+1776139153.2158,827,Person moving away on your left — far,True,1,9.87
+1776139153.2673,828,Path clear,True,0,19.44
+1776139153.3152,829,Path clear,True,0,20.86
+1776139153.3639,830,Path clear,True,0,20.53
+1776139153.4097,831,Path clear,True,0,21.81
+1776139153.457,832,Path clear,True,0,21.15
+1776139153.5031,833,Path clear,True,0,21.7
+1776139153.5485,834,Path clear,True,0,22.06
+1776139153.5953,835,Path clear,True,0,21.35
+1776139153.6414,836,Path clear,True,0,21.72
+1776139153.6881,837,Path clear,True,0,21.41
+1776139153.7341,838,Path clear,True,0,21.72
+1776139153.78,839,Path clear,True,0,21.77
+1776139153.8311,840,Path clear,True,0,19.58
+1776139153.8794,841,Tv on your right — medium,True,1,20.69
+1776139153.9307,842,Tv on your right — medium,True,1,19.48
+1776139153.9792,843,Laptop on your center — close ⚠ danger. Also: tv right,False,2,20.65
+1776139154.0381,844,Tv approaching on your center — close,True,1,16.97
+1776139154.088,845,Tv approaching on your center — close,True,1,20.02
+1776139154.1352,846,Tv approaching on your center — close,True,1,21.22
+1776139154.1822,847,Path clear,True,0,21.26
+1776139154.2301,848,Path clear,True,0,20.86
+1776139154.2771,849,Path clear,True,0,21.29
+1776139154.3233,850,Path clear,True,0,21.67
+1776139154.3702,851,Path clear,True,0,21.29
+1776139154.4156,852,Path clear,True,0,22.04
+1776139154.4642,853,Path clear,True,0,20.58
+1776139154.5111,854,Path clear,True,0,21.3
+1776139154.5587,855,Path clear,True,0,21.01
+1776139154.6073,856,Tv moving away on your center — medium,True,1,20.6
+1776139154.6581,857,Keyboard on your left — medium,True,1,19.67
+1776139154.7048,858,Tv moving away on your left — medium,True,1,21.45
+1776139154.751,859,Tv moving away on your left — medium,True,1,21.64
+1776139154.8001,860,Tv moving away on your left — medium,True,1,20.37
+1776139154.8466,861,Path clear,True,0,21.49
+1776139154.9481,862,Tv moving away on your center — medium,True,1,9.85
+1776139154.9971,863,Path clear,True,0,20.4
+1776139155.0474,864,Path clear,True,0,19.9
+1776139155.0954,865,Path clear,True,0,20.83
+1776139155.1439,866,Path clear,True,0,20.59
+1776139155.1895,867,Path clear,True,0,21.94
+1776139155.236,868,Path clear,True,0,21.53
+1776139155.2813,869,Path clear,True,0,22.04
+1776139155.3279,870,Path clear,True,0,21.46
+1776139155.3754,871,Path clear,True,0,21.07
+1776139155.4201,872,Path clear,True,0,22.36
+1776139155.4662,873,Path clear,True,0,21.71
+1776139155.5138,874,Path clear,True,0,21.0
+1776139155.562,875,Path clear,True,0,20.76
+1776139155.6083,876,Path clear,True,0,21.59
+1776139155.655,877,Path clear,True,0,21.43
+1776139155.6989,878,Path clear,True,0,22.76
+1776139155.7451,879,Path clear,True,0,21.65
+1776139155.791,880,Path clear,True,0,21.79
+1776139155.835,881,Path clear,True,0,22.71
+1776139155.8823,882,Path clear,True,0,21.17
+1776139155.9298,883,Path clear,True,0,21.03
+1776139155.9767,884,Path clear,True,0,21.34
+1776139156.0234,885,Path clear,True,0,21.41
+1776139156.0713,886,Path clear,True,0,20.88
+1776139156.1166,887,Path clear,True,0,22.06
+1776139156.1635,888,Path clear,True,0,21.31
+1776139156.2121,889,Path clear,True,0,20.59
+1776139156.262,890,Path clear,True,0,20.06
+1776139156.3088,891,Path clear,True,0,21.36
+1776139156.3564,892,Path clear,True,0,21.01
+1776139156.4018,893,Path clear,True,0,22.02
+1776139156.4498,894,Path clear,True,0,20.85
+1776139156.4973,895,Path clear,True,0,21.04
+1776139156.5461,896,Path clear,True,0,20.51
+1776139156.5954,897,Path clear,True,0,20.26
+1776139156.6457,898,Path clear,True,0,19.9
+1776139156.6927,899,Path clear,True,0,21.29
+1776139156.7355,900,Path clear,True,0,23.33
+1776139156.7835,901,Path clear,True,0,20.84
+1776139156.8313,902,Path clear,True,0,20.9
+1776139156.8806,903,Path clear,True,0,20.32
+1776139156.9322,904,Path clear,True,0,19.36
+1776139156.9783,905,Path clear,True,0,21.7
+1776139157.0269,906,Path clear,True,0,20.6

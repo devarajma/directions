@@ -1,0 +1,21 @@
+{
+  "session_id": "20260414_092740",
+  "start_time": "2026-04-14T09:27:40.944488",
+  "log_dir": "logs/20260414_092740",
+  "detection_log": "logs/20260414_092740/detections.csv",
+  "nav_log": "logs/20260414_092740/navigation.csv",
+  "events": [
+    {
+      "time": "2026-04-14T09:28:32.749368",
+      "elapsed": 51.81,
+      "type": "connected",
+      "detail": "phone stream started"
+    },
+    {
+      "time": "2026-04-14T09:29:17.021984",
+      "elapsed": 96.08,
+      "type": "disconnected",
+      "detail": "closed"
+    }
+  ]
+}
