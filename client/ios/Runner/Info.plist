@@ -59,6 +59,14 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is needed for real-time navigation and obstacle detection.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location access is needed to send your position in emergency alerts.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location access is needed to send your position in emergency alerts.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone access may be required for WebRTC communication.</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

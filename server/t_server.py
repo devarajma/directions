@@ -1,209 +1,3 @@
-# import asyncio
-# import json
-# import cv2
-# import threading
-# import sys
-# import numpy as np
-
-# from aiohttp import web
-# from aiortc import RTCPeerConnection, RTCSessionDescription
-# from ultralytics import YOLO
-
-# # ── globals ────────────────────────────────────────────────────────────────────
-# pcs = set()
-# model = YOLO("yolov8n.pt")
-# model.to("mps")  # uncomment for Apple Silicon GPU
-
-# latest_frame    = None
-# processed_frame = None
-# lock            = threading.Lock()
-# RUNNING         = True
-# stream_active   = False
-
-
-# # ── ICE gather wait ────────────────────────────────────────────────────────────
-# async def wait_for_ice(pc, timeout=10):
-#     gathered = asyncio.Event()
-
-#     @pc.on("icegatheringstatechange")
-#     def on_ice_state():
-#         print("ICE gathering state:", pc.iceGatheringState)
-#         if pc.iceGatheringState == "complete":
-#             gathered.set()
-
-#     if pc.iceGatheringState == "complete":
-#         return
-
-#     try:
-#         await asyncio.wait_for(gathered.wait(), timeout=timeout)
-#     except asyncio.TimeoutError:
-#         print("ICE gathering timed out — sending SDP anyway")
-
-
-# # ── YOLO inference thread ──────────────────────────────────────────────────────
-# def process_frames():
-#     global latest_frame, processed_frame, RUNNING
-#     while RUNNING:
-#         # simply wait for a frame — no stream_active check
-#         if latest_frame is None:
-#             continue
-
-#         with lock:
-#             frame = latest_frame.copy()
-
-#         results   = model(frame, imgsz=640, conf=0.4)
-#         annotated = results[0].plot()
-
-#         with lock:
-#             processed_frame = annotated
-
-
-# # ── routes ─────────────────────────────────────────────────────────────────────
-# async def index(request):
-#     return web.Response(text="WebRTC + YOLOv8 server running")
-
-
-# async def offer(request):
-#     global latest_frame, RUNNING, stream_active
-
-#     params = await request.json()
-#     sdp    = RTCSessionDescription(sdp=params["sdp"], type=params["type"])
-
-#     pc = RTCPeerConnection()
-#     pcs.add(pc)
-
-#     @pc.on("connectionstatechange")
-#     async def on_connectionstatechange():
-#         global stream_active, latest_frame, processed_frame
-#         print("Connection state:", pc.connectionState)
-
-#         if pc.connectionState in ("failed", "closed", "disconnected"):
-#             stream_active = False
-#             with lock:
-#                 latest_frame    = None
-#                 processed_frame = None
-#             print("Stream stopped — frames cleared")
-#             await pc.close()
-#             pcs.discard(pc)
-
-#     @pc.on("track")
-#     def on_track(track):
-#         global stream_active
-#         if track.kind != "video":
-#             return
-#         print("Video track received — starting recv loop")
-
-#         # ✅ set active as soon as track arrives, not waiting for "connected"
-#         stream_active = True
-
-#         @track.on("ended")
-#         def on_ended():
-#             global stream_active, latest_frame, processed_frame
-#             print("Track ended — clearing frames")
-#             stream_active = False
-#             with lock:
-#                 latest_frame    = None
-#                 processed_frame = None
-
-#         async def recv_loop():
-#             global latest_frame, stream_active
-#             print("recv_loop started")
-#             while RUNNING:
-#                 try:
-#                     frame = await track.recv()
-#                     img   = frame.to_ndarray(format="bgr24")
-
-#                     h, w = img.shape[:2]
-#                     if w > 1280:
-#                         img = cv2.resize(img, (1280, 720))
-
-#                     with lock:
-#                         latest_frame = img
-
-#                 except Exception as e:
-#                     print("recv ended:", e)
-#                     stream_active = False
-#                     with lock:
-#                         latest_frame    = None
-#                         processed_frame = None
-#                     break
-
-#         asyncio.ensure_future(recv_loop())
-
-#     await pc.setRemoteDescription(sdp)
-#     answer = await pc.createAnswer()
-#     await pc.setLocalDescription(answer)
-
-#     await wait_for_ice(pc)
-
-#     return web.Response(
-#         content_type="application/json",
-#         text=json.dumps({
-#             "sdp":  pc.localDescription.sdp,
-#             "type": pc.localDescription.type,
-#         }),
-#     )
-
-
-# # ── server runner ──────────────────────────────────────────────────────────────
-# async def run_server_async():
-#     app = web.Application()
-#     app.router.add_get("/",       index)
-#     app.router.add_post("/offer", offer)
-
-#     runner = web.AppRunner(app)
-#     await runner.setup()
-
-#     site = web.TCPSite(runner, host="0.0.0.0", port=8080)
-#     await site.start()
-
-#     print("Server running on http://0.0.0.0:8080  —  press Q to quit")
-
-#     while RUNNING:
-#         await asyncio.sleep(0.1)
-
-#     await runner.cleanup()
-
-
-# def run_server():
-#     loop = asyncio.new_event_loop()
-#     asyncio.set_event_loop(loop)
-#     loop.run_until_complete(run_server_async())
-
-
-# # ── start threads ──────────────────────────────────────────────────────────────
-# threading.Thread(target=process_frames, daemon=True).start()
-# threading.Thread(target=run_server,     daemon=True).start()
-
-# # ── MAIN THREAD → OpenCV display ──────────────────────────────────────────────
-# while True:
-#     with lock:
-#         frame = processed_frame.copy() if processed_frame is not None else None
-
-#     if frame is not None:
-#         cv2.imshow("WebRTC — YOLOv8 Detection", frame)
-#     else:
-#         blank = np.zeros((480, 640, 3), dtype="uint8")
-#         msg   = "Waiting for phone stream..." if not stream_active else "Waiting for first frame..."
-#         cv2.putText(
-#             blank, msg,
-#             (60, 240),
-#             cv2.FONT_HERSHEY_SIMPLEX,
-#             0.8, (0, 255, 0), 2,
-#         )
-#         cv2.imshow("WebRTC — YOLOv8 Detection", blank)
-
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         print("Shutting down...")
-#         RUNNING = False
-#         break
-
-# cv2.destroyAllWindows()
-# sys.exit(0)
-
-
-
-
 import asyncio
 import json
 import cv2
@@ -212,6 +6,7 @@ import sys
 import numpy as np
 import time
 from collections import defaultdict
+import requests
 
 from aiohttp import web
 from aiortc import RTCPeerConnection, RTCSessionDescription
@@ -519,6 +314,15 @@ async def offer(request):
     pc = RTCPeerConnection()
     pcs.add(pc)
 
+    # ── ICE diagnostics ────────────────────────────────────────────────────
+    @pc.on("icegatheringstatechange")
+    def on_ice_gathering():
+        print(f"ICE gathering state: {pc.iceGatheringState}")
+
+    @pc.on("iceconnectionstatechange")
+    def on_ice_connection():
+        print(f"ICE connection state: {pc.iceConnectionState}")
+
     @pc.on("connectionstatechange")
     async def on_connectionstatechange():
         global stream_active, latest_frame, processed_frame, navigation_data
@@ -589,6 +393,10 @@ async def offer(request):
     await pc.setLocalDescription(answer)
     await wait_for_ice(pc)
 
+    print("--- SERVER GENERATED SDP ---")
+    print(pc.localDescription.sdp)
+    print("----------------------------")
+
     return web.Response(
         content_type="application/json",
         text=json.dumps({
@@ -652,3 +460,198 @@ while True:
 
 cv2.destroyAllWindows()
 sys.exit(0)
+
+
+# ── Emergency System ──────────────────────────────────────────────────────────
+def emergency_system_ui():
+    """
+    Create the UI for the emergency system, including a side panel, emergency slider,
+    and contact management form.
+    """
+    # Placeholder for Flutter UI integration
+    print("Emergency system UI initialized.")
+
+def handle_sos_trigger():
+    """
+    Handle SOS trigger to send an emergency alert.
+    """
+    gps_location = get_gps_location()
+    timestamp = time.time()
+    message = f"User needs help. Location: {gps_location}. Timestamp: {timestamp}."
+    send_alert(message)
+
+def manage_contacts(action, contact=None):
+    """
+    Add, edit, or delete emergency contacts.
+    """
+    if action == "add" and contact:
+        print(f"Adding contact: {contact}")
+    elif action == "edit" and contact:
+        print(f"Editing contact: {contact}")
+    elif action == "delete" and contact:
+        print(f"Deleting contact: {contact}")
+    else:
+        print("Invalid action or contact.")
+
+
+# ── Accessibility-Focused Interaction ─────────────────────────────────────────
+def handle_gesture(gesture):
+    """
+    Handle gestures for accessibility-focused interaction.
+    """
+    if gesture == "single_tap":
+        print("Single tap detected. Triggering depth analysis.")
+        gesture_handler("single_tap")
+    elif gesture == "swipe":
+        print("Swipe detected. Activating exploration mode.")
+        gesture_handler("swipe")
+    elif gesture == "long_press":
+        print("Long press detected. Triggering SOS.")
+        handle_sos_trigger()
+    else:
+        print("Unknown gesture.")
+
+# Minimal UI placeholder for Flutter integration
+def minimal_ui():
+    """
+    Create a minimal UI for setup and backup triggers.
+    """
+    print("Minimal UI initialized for accessibility.")
+
+# ── Depth Analysis ────────────────────────────────────────────────────────────
+def depth_analysis(frame):
+    """
+    Perform depth analysis on the given frame using Depth Anything V2.
+    Returns a dictionary with object labels, distances, and directions.
+    """
+    # Integrate Depth Anything V2 model
+    depth_model = load_depth_model("models/yolov8n_float16.tflite")
+    depth_results = depth_model.analyze(frame)
+    return depth_results
+
+# ── Gesture Handler ───────────────────────────────────────────────────────────
+def gesture_handler(gesture):
+    """
+    Handle user gestures to trigger depth analysis or exploration mode.
+    """
+    if gesture == "single_tap":
+        with lock:
+            frame = latest_frame.copy() if latest_frame is not None else None
+        if frame is not None:
+            depth_results = depth_analysis(frame)
+            # Convert depth results to audio feedback
+            audio_feedback(depth_results)
+
+    elif gesture == "swipe":
+        exploration_mode()
+
+# ── Exploration Mode ──────────────────────────────────────────────────────────
+def exploration_mode():
+    """
+    Activate short exploration mode to describe surroundings with depth-based distances.
+    """
+    with lock:
+        frame = latest_frame.copy() if latest_frame is not None else None
+    if frame is not None:
+        depth_results = depth_analysis(frame)
+        # Convert depth results to audio feedback
+        audio_feedback(depth_results)
+
+# ── Audio Feedback ────────────────────────────────────────────────────────────
+def audio_feedback(depth_results):
+    """
+    Provide audio feedback for depth results.
+    """
+    for obj in depth_results["objects"]:
+        label = obj["label"]
+        distance = obj["distance"]
+        direction = obj["direction"]
+        text_to_speech(f"{label} detected {distance} meters away on your {direction}.")
+
+# ── Text-to-Speech (TTS) Integration ──────────────────────────────────────────
+def text_to_speech(message):
+    """
+    Convert the given message to speech using a TTS engine.
+    """
+    try:
+        import pyttsx3
+        tts_engine = pyttsx3.init()
+        tts_engine.say(message)
+        tts_engine.runAndWait()
+    except ImportError:
+        print("TTS engine not installed. Please install pyttsx3.")
+        print(message)
+
+
+# ── Telegram, WhatsApp, and SMS Alert Functions ───────────────────────────────
+def send_alert_via_telegram(contact, message):
+    """
+    Send an alert message via Telegram.
+    """
+    telegram_bot_token = "<YOUR_TELEGRAM_BOT_TOKEN>"
+    telegram_chat_id = contact  # Assuming contact is the chat ID
+    url = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
+    payload = {
+        "chat_id": telegram_chat_id,
+        "text": message
+    }
+    response = requests.post(url, json=payload)
+    if response.status_code == 200:
+        print(f"Message sent to Telegram contact {contact}")
+    else:
+        print(f"Failed to send message to Telegram contact {contact}: {response.text}")
+
+def send_alert_via_whatsapp(contact, message):
+    """
+    Send an alert message via WhatsApp using Twilio API.
+    """
+    from twilio.rest import Client
+
+    account_sid = "<YOUR_TWILIO_ACCOUNT_SID>"
+    auth_token = "<YOUR_TWILIO_AUTH_TOKEN>"
+    twilio_whatsapp_number = "whatsapp:+<YOUR_TWILIO_WHATSAPP_NUMBER>"
+
+    client = Client(account_sid, auth_token)
+    try:
+        client.messages.create(
+            body=message,
+            from_=twilio_whatsapp_number,
+            to=f"whatsapp:{contact}"
+        )
+        print(f"Message sent to WhatsApp contact {contact}")
+    except Exception as e:
+        print(f"Failed to send message to WhatsApp contact {contact}: {e}")
+
+def send_alert_via_sms(contact, message):
+    """
+    Send an alert message via SMS using Twilio API.
+    """
+    from twilio.rest import Client
+
+    account_sid = "<YOUR_TWILIO_ACCOUNT_SID>"
+    auth_token = "<YOUR_TWILIO_AUTH_TOKEN>"
+    twilio_phone_number = "<YOUR_TWILIO_PHONE_NUMBER>"
+
+    client = Client(account_sid, auth_token)
+    try:
+        client.messages.create(
+            body=message,
+            from_=twilio_phone_number,
+            to=contact
+        )
+        print(f"Message sent to SMS contact {contact}")
+    except Exception as e:
+        print(f"Failed to send message to SMS contact {contact}: {e}")
+
+def send_help_message_with_location(contacts, location):
+    """
+    Send help message with geological map location to all contacts.
+    """
+    message = f"User needs help. Location: {location}."
+    for contact in contacts:
+        if contact.startswith("telegram:"):
+            send_alert_via_telegram(contact.replace("telegram:", ""), message)
+        elif contact.startswith("whatsapp:"):
+            send_alert_via_whatsapp(contact.replace("whatsapp:", ""), message)
+        else:
+            send_alert_via_sms(contact, message)
