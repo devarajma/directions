@@ -1,0 +1,26 @@
+{
+  "session_id": "merged",
+  "num_sessions": 15,
+  "total_frames": 54539,
+  "total_detections": 34042,
+  "total_danger_events": 0,
+  "avg_fps": 51.12,
+  "avg_detections_per_frame": 0.62,
+  "top_labels": {
+    "person": 7700,
+    "bed": 6190,
+    "laptop": 5377,
+    "tv": 3358,
+    "bottle": 2110,
+    "bowl": 1475,
+    "keyboard": 950,
+    "chair": 740,
+    "cat": 734,
+    "cup": 616,
+    "vase": 599,
+    "dog": 542,
+    "sink": 520,
+    "microwave": 432,
+    "pizza": 354
+  }
+}
