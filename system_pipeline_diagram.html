@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>System Architecture Pipeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .page {
+    width: 720px;
+    background: #fff;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 18px;
+    color: #1a1a1a;
+  }
+
+  .diagram {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  /* ── Boundary boxes ─────────────────────── */
+  .boundary {
+    border: 2px solid #333;
+    border-radius: 6px;
+    padding: 10px 8px 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .boundary-label {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #333;
+  }
+
+  .client-boundary {
+    flex: 1;
+    border-color: #2563eb;
+  }
+  .client-boundary .boundary-label { color: #2563eb; }
+
+  .server-boundary {
+    flex: 1.1;
+    border-color: #16a34a;
+  }
+  .server-boundary .boundary-label { color: #16a34a; }
+
+  .cloud-boundary {
+    flex: 0.45;
+    border-color: #9333ea;
+    justify-content: center;
+  }
+  .cloud-boundary .boundary-label { color: #9333ea; }
+
+  /* ── Component boxes ────────────────────── */
+  .comp {
+    border: 1.5px solid #444;
+    border-radius: 4px;
+    padding: 6px 8px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: #1a1a1a;
+    background: #fafafa;
+    position: relative;
+  }
+
+  .comp-name {
+    font-weight: 700;
+    font-size: 9.5px;
+    display: block;
+    margin-bottom: 1px;
+  }
+
+  .comp-detail {
+    font-weight: 400;
+    font-size: 8px;
+    color: #555;
+    display: block;
+  }
+
+  /* Color coding */
+  .comp-camera    { border-color: #2563eb; background: #eff6ff; }
+  .comp-webrtc    { border-color: #0891b2; background: #ecfeff; }
+  .comp-nav       { border-color: #2563eb; background: #eff6ff; }
+  .comp-gesture   { border-color: #7c3aed; background: #f5f3ff; }
+  .comp-audio     { border-color: #16a34a; background: #f0fdf4; }
+  .comp-safety    { border-color: #dc2626; background: #fef2f2; }
+  .comp-model     { border-color: #ea580c; background: #fff7ed; }
+  .comp-endpoint  { border-color: #16a34a; background: #f0fdf4; }
+  .comp-infra     { border-color: #0891b2; background: #ecfeff; }
+  .comp-cloud     { border-color: #9333ea; background: #faf5ff; }
+  .comp-eval      { border-color: #64748b; background: #f8fafc; }
+
+  /* ── Sections within boundaries ─────────── */
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .section-label {
+    font-size: 8px;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding-left: 2px;
+    margin-top: 2px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 2px;
+  }
+
+  .row {
+    display: flex;
+    gap: 5px;
+  }
+
+  .row .comp { flex: 1; }
+
+  /* ── Arrow connections ──────────────────── */
+  .arrows-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .arrows-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .flow-group {
+    margin-bottom: 10px;
+  }
+
+  .flow-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 4px;
+  }
+
+  .flow-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 8px;
+    color: #333;
+    margin-bottom: 3px;
+    flex-wrap: wrap;
+  }
+
+  .flow-box {
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 2px 6px;
+    background: #f9fafb;
+    font-weight: 500;
+    white-space: nowrap;
+    font-size: 8px;
+  }
+
+  .flow-arrow {
+    margin: 0 3px;
+    color: #666;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .flow-protocol {
+    font-size: 7px;
+    color: #888;
+    font-style: italic;
+    margin: 0 2px;
+  }
+
+  .legend {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 8px;
+    color: #555;
+  }
+
+  .legend-box {
+    width: 14px;
+    height: 10px;
+    border: 1.5px solid;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="title">Figure 4.1 — System Architecture Pipeline</div>
+
+  <div class="diagram">
+
+    <!-- ═══ CLIENT ═══ -->
+    <div class="boundary client-boundary">
+      <span class="boundary-label">Mobile Client (Flutter)</span>
+
+      <div class="section">
+        <div class="section-label">Input</div>
+        <div class="comp comp-camera">
+          <span class="comp-name">Rear Camera</span>
+          <span class="comp-detail">640×480, 30 fps</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Communication</div>
+        <div class="comp comp-webrtc">
+          <span class="comp-name">WebRTC Sender</span>
+          <span class="comp-detail">SDP + ICE Negotiation</span>
+        </div>
+        <div class="row">
+          <div class="comp comp-nav">
+            <span class="comp-name">Nav Poller</span>
+            <span class="comp-detail">GET /nav (1.2s)</span>
+          </div>
+          <div class="comp comp-gesture">
+            <span class="comp-name">Scene Client</span>
+            <span class="comp-detail">GET /scene</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Interaction</div>
+        <div class="comp comp-gesture">
+          <span class="comp-name">Gesture Detector</span>
+          <span class="comp-detail">Double-tap-hold (600ms)</span>
+        </div>
+        <div class="comp comp-cloud">
+          <span class="comp-name">Groq API Client</span>
+          <span class="comp-detail">LLaMA 3.1 Prompt</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Output</div>
+        <div class="comp comp-audio">
+          <span class="comp-name">Audio Engine</span>
+          <span class="comp-detail">6-Filter TTS Pipeline</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Safety</div>
+        <div class="row">
+          <div class="comp comp-safety">
+            <span class="comp-name">Fall Detector</span>
+            <span class="comp-detail">Accelerometer</span>
+          </div>
+          <div class="comp comp-safety">
+            <span class="comp-name">Emergency</span>
+            <span class="comp-detail">SMS + GPS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SERVER ═══ -->
+    <div class="boundary server-boundary">
+      <span class="boundary-label">Detection Server (Python)</span>
+
+      <div class="section">
+        <div class="section-label">Input</div>
+        <div class="comp comp-infra">
+          <span class="comp-name">WebRTC Receiver</span>
+          <span class="comp-detail">aiohttp + aiortc</span>
+        </div>
+        <div class="comp comp-infra">
+          <span class="comp-name">Frame Buffer</span>
+          <span class="comp-detail">Thread-safe Latest Frame</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Inference Models</div>
+        <div class="comp comp-model">
+          <span class="comp-name">YOLOv8n</span>
+          <span class="comp-detail">Continuous, 3.2M params, MPS</span>
+        </div>
+        <div class="comp comp-model">
+          <span class="comp-name">Depth Anything V2</span>
+          <span class="comp-detail">On-demand, 24.8M params, ViT-S</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Processing</div>
+        <div class="comp comp-infra">
+          <span class="comp-name">Navigation Builder</span>
+          <span class="comp-detail">Zone + Proximity + Approach</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Endpoints</div>
+        <div class="row">
+          <div class="comp comp-endpoint">
+            <span class="comp-name">/nav</span>
+            <span class="comp-detail">Navigation JSON</span>
+          </div>
+          <div class="comp comp-endpoint">
+            <span class="comp-name">/scene</span>
+            <span class="comp-detail">Depth-enriched JSON</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Monitoring</div>
+        <div class="row">
+          <div class="comp comp-eval">
+            <span class="comp-name">OpenCV Display</span>
+            <span class="comp-detail">Annotated View</span>
+          </div>
+          <div class="comp comp-eval">
+            <span class="comp-name">Logger</span>
+            <span class="comp-detail">CSV Telemetry</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CLOUD ═══ -->
+    <div class="boundary cloud-boundary">
+      <span class="boundary-label">Cloud</span>
+
+      <div class="section">
+        <div class="section-label">LLM Service</div>
+        <div class="comp comp-cloud">
+          <span class="comp-name">Groq Cloud API</span>
+          <span class="comp-detail">LLaMA 3.1-8B Instant</span>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top: auto;">
+        <div class="section-label">Evaluation</div>
+        <div class="comp comp-eval">
+          <span class="comp-name">Session Merger</span>
+          <span class="comp-detail">merge_session.py</span>
+        </div>
+        <div class="comp comp-eval">
+          <span class="comp-name">Plot Generator</span>
+          <span class="comp-detail">plot_session.py</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ DATA FLOWS ═══ -->
+  <div class="arrows-section">
+    <div class="arrows-title">Data Flow Paths</div>
+
+    <div class="flow-group">
+      <div class="flow-label">Flow 1 — Continuous Navigation</div>
+      <div class="flow-line">
+        <span class="flow-box">Rear Camera</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-protocol">WebRTC</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Frame Buffer</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">YOLOv8n</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Nav Builder</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">/nav</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-protocol">HTTP</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Audio Engine</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">TTS Speaker</span>
+      </div>
+    </div>
+
+    <div class="flow-group">
+      <div class="flow-label">Flow 2 — On-Demand Scene Analysis (Gesture-triggered)</div>
+      <div class="flow-line">
+        <span class="flow-box">Gesture Detector</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">/scene</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Depth Anything V2</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Scene Client</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-protocol">HTTPS</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Groq LLaMA 3.1</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Audio Engine</span>
+      </div>
+    </div>
+
+    <div class="flow-group">
+      <div class="flow-label">Flow 3 — Emergency Response</div>
+      <div class="flow-line">
+        <span class="flow-box">Fall Detector</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">5s Countdown</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">GPS Location</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">SMS Alert</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-box">Emergency Contacts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEGEND ═══ -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #2563eb; background: #eff6ff;"></div>
+      Core / Communication
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #ea580c; background: #fff7ed;"></div>
+      Inference Models
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #16a34a; background: #f0fdf4;"></div>
+      Endpoints / Audio
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #7c3aed; background: #f5f3ff;"></div>
+      Gesture / Interaction
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #dc2626; background: #fef2f2;"></div>
+      Safety / Emergency
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #9333ea; background: #faf5ff;"></div>
+      Cloud Service
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color: #64748b; background: #f8fafc;"></div>
+      Monitoring / Evaluation
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

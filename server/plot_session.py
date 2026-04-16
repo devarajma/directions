@@ -36,7 +36,8 @@ def find_session(path=None):
     return sessions[-1].rstrip("/")
 
 
-session_dir = find_session(sys.argv[1] if len(sys.argv) > 1 else None)
+# session_dir = find_session(sys.argv[1] if len(sys.argv) > 1 else None)
+session_dir = "merged_logs"
 print(f"Plotting session: {session_dir}")
 
 PLOTS_DIR = os.path.join(session_dir, "plots")
