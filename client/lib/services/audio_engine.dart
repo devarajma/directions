@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_tts/flutter_tts.dart';
 
 // ── audio engine v3 ────────────────────────────────────────────────────────────
@@ -5,6 +6,7 @@ class AudioEngine {
   final FlutterTts _tts = FlutterTts();
   bool _enabled         = true;
   bool _speaking        = false;
+  Timer? _speakingTimer;  // safety: auto-reset _speaking after timeout
 
   String   _lastSpoken     = "";
   DateTime _lastSpokenAt   = DateTime.fromMillisecondsSinceEpoch(0);
@@ -13,15 +15,15 @@ class AudioEngine {
   final Map<String, DateTime> _labelLastSpoken = {};
 
   // how long to wait before repeating the SAME label
-  static const Duration _labelCooldown  = Duration(seconds: 4);
+  static const Duration _labelCooldown  = Duration(seconds: 2);
   // minimum gap between any two speech outputs
-  static const Duration _globalCooldown = Duration(milliseconds: 2500);
+  static const Duration _globalCooldown = Duration(milliseconds: 800);
   // danger objects get a shorter repeat gap
-  static const Duration _dangerCooldown = Duration(seconds: 2);
+  static const Duration _dangerCooldown = Duration(seconds: 1);
 
   Future<void> init() async {
     await _tts.setLanguage("en-US");
-    await _tts.setSpeechRate(0.50);
+    await _tts.setSpeechRate(0.55);    // faster — matches display update pace
     await _tts.setVolume(1.0);
     await _tts.setPitch(1.0);
     _tts.setCompletionHandler(() => _speaking = false);
@@ -30,6 +32,8 @@ class AudioEngine {
 
   bool get enabled => _enabled;
   void toggle()    => _enabled = !_enabled;
+
+  String get lastSpoken => _lastSpoken;
 
   Future<void> process(Map<String, dynamic> nav) async {
     if (!_enabled) return;
@@ -85,11 +89,14 @@ class AudioEngine {
 
       final label     = a["label"]    as String? ?? "object";
       final isDanger  = a["danger"]   as bool?   ?? false;
+      final isClose   = (a["proximity"] as String? ?? "far") == "close";
       final cooldown  = isDanger ? _dangerCooldown : _labelCooldown;
       final lastSeen  = _labelLastSpoken[label];
 
-      // skip if this label was spoken recently
-      if (lastSeen != null && now.difference(lastSeen) < cooldown) continue;
+      // Critical close danger objects SKIP label cooldown entirely
+      if (!isDanger || !isClose) {
+        if (lastSeen != null && now.difference(lastSeen) < cooldown) continue;
+      }
 
       toSpeak.add(a);
       _labelLastSpoken[label] = now;
@@ -99,10 +106,11 @@ class AudioEngine {
 
     // ── FILTER 6: global gap — don't interrupt current speech ─────────────────
     final globalElapsed = now.difference(_lastSpokenAt);
+    // Critical = any close danger object (person, car, etc. right in front)
+    // No longer requires "approaching" — a stationary obstacle is just as dangerous
     final isCritical    = toSpeak.any((a) =>
         a["danger"]    == true &&
-        a["proximity"] == "close" &&
-        a["approach"]  == "approaching");
+        a["proximity"] == "close");
 
     if (_speaking && !isCritical) return;
     if (!isCritical && globalElapsed < _globalCooldown) return;
@@ -162,22 +170,35 @@ class AudioEngine {
     _speaking     = true;
     _lastSpoken   = message;
     _lastSpokenAt = DateTime.now();
+    // Safety: auto-reset _speaking after 4s in case TTS completion handler
+    // never fires (platform bug). Prevents permanently stuck _speaking flag.
+    _speakingTimer?.cancel();
+    _speakingTimer = Timer(const Duration(seconds: 4), () {
+      _speaking = false;
+    });
     await _tts.speak(message);
   }
 
   Future<void> speakDirect(String message) async {
     await _tts.stop();
-    _speaking = false;
     _speaking     = true;
     _lastSpoken   = message;
     _lastSpokenAt = DateTime.now();
+    _speakingTimer?.cancel();
+    _speakingTimer = Timer(const Duration(seconds: 4), () {
+      _speaking = false;
+    });
     await _tts.speak(message);
   }
 
   Future<void> stop() async {
     await _tts.stop();
+    _speakingTimer?.cancel();
     _speaking = false;
   }
 
-  void dispose() => _tts.stop();
+  void dispose() {
+    _speakingTimer?.cancel();
+    _tts.stop();
+  }
 }

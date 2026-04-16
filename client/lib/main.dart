@@ -10,11 +10,15 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_sms/flutter_sms.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'emergency_panel.dart';
 import 'models/emergency_contact.dart';
 import 'services/audio_engine.dart';
 import 'services/emergency_service.dart';
+import 'controllers/scene_analysis_controller.dart';
+import 'services/scene_analysis_server.dart';
+import 'services/gesture_scene_analyzer.dart';
 
 void main() => runApp(const MyApp());
 
@@ -57,32 +61,45 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
   int     _objectCount = 0;
   Timer?  _navTimer;
 
-  // ── emergency contacts ──────────────────────────────────────────────────
-  List<EmergencyContact> _contacts = [];
+  // ── Scene Analysis ─────────────────────────────────────────────────────────
+  late SceneAnalysisController      _sceneAnalysisController;
+  late DoubleTapHoldGestureDetector _gestureDetector;
+  late GestureSceneAnalyzer         _gestureAnalyzer;
+  late SceneAnalysisServerClient    _sceneServerClient;
+  final AudioPlayer _analysisAudioPlayer = AudioPlayer();
+
+  // Groq API key — move to flutter_secure_storage before production
+  static const String _groqApiKey =
+      "";
+
+  // ── emergency contacts ─────────────────────────────────────────────────────
+  List<EmergencyContact> _contacts        = [];
   SharedPreferences?     _prefs;
   String                 _userPhoneNumber = "";
-
-  // ── persistent text controllers ─────────────────────────────────────────
   final TextEditingController _userPhoneController = TextEditingController();
 
-  // ── fall detection ──────────────────────────────────────────────────────
+  // ── fall detection ─────────────────────────────────────────────────────────
   StreamSubscription?   _accelSub;
-  DateTime              _lastFallAlert = DateTime.fromMillisecondsSinceEpoch(0);
-  static const Duration _fallCooldown  = Duration(seconds: 10);
-  static const double   _fallThreshold = 15.0;
+  DateTime              _lastFallAlert       = DateTime.fromMillisecondsSinceEpoch(0);
+  static const Duration _fallCooldown        = Duration(seconds: 10);
+  static const double   _fallThreshold       = 15.0;
   bool   _fallCountdownActive  = false;
   Timer? _fallCountdownTimer;
   int    _fallCountdownSeconds = 5;
 
-  // ── sliding panel ───────────────────────────────────────────────────────
+  // ── sliding panel ──────────────────────────────────────────────────────────
   final DraggableScrollableController _panelController =
       DraggableScrollableController();
 
-  // ── lifecycle ────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // LIFECYCLE
+  // ══════════════════════════════════════════════════════════════════════════
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _initSceneAnalysis();
     _init();
   }
 
@@ -93,6 +110,50 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     await _initializeEmergencyService();
     _startFallDetection();
     await _startWebRTC();
+  }
+
+  // ── Scene Analysis init ────────────────────────────────────────────────────
+  void _initSceneAnalysis() {
+    _sceneAnalysisController = SceneAnalysisController();
+
+    _sceneServerClient = SceneAnalysisServerClient(
+      serverUrl: _serverBase,
+    );
+
+    // GestureSceneAnalyzer — no longer takes a FlutterTts arg
+    _gestureAnalyzer = GestureSceneAnalyzer(
+      audio:        _audio,
+      audioPlayer:  _analysisAudioPlayer,
+      controller:   _sceneAnalysisController,
+      serverClient: _sceneServerClient,
+      groqApiKey:   _groqApiKey,
+    );
+
+    _gestureDetector = DoubleTapHoldGestureDetector(
+      // ── double-tap (quick release < 300 ms) → repeat last message ────────
+      onDoubleTap: () {
+        final last = _audio.lastSpoken;
+        if (last.isNotEmpty) {
+          _audio.speakDirect(last);
+        }
+      },
+      // ── second tap starts, hold timer running ─────────────────────────────
+      onGestureStart: () {
+        // subtle haptic so the user knows the hold phase has begun
+        HapticFeedback.lightImpact();
+      },
+      // ── hold completed (600 ms) → full scene analysis ─────────────────────
+      onGestureDetected: () {
+        HapticFeedback.mediumImpact();
+        _gestureAnalyzer.onGestureDetected();
+      },
+      // ── released early → silent cancel ───────────────────────────────────
+      onGestureCancelled: () {
+        _sceneAnalysisController.cancel();
+      },
+    );
+
+    print("✅ Scene analysis initialised");
   }
 
   @override
@@ -107,6 +168,10 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     _localRenderer.dispose();
     _panelController.dispose();
     _userPhoneController.dispose();
+    _gestureDetector.dispose();
+    _gestureAnalyzer.dispose();
+    _sceneAnalysisController.dispose();
+    _analysisAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -116,7 +181,10 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) _audio.speakDirect("Navigation resumed");
   }
 
-  // ── contacts persistence ─────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // CONTACTS
+  // ══════════════════════════════════════════════════════════════════════════
+
   Future<void> _loadContacts() async {
     _prefs = await SharedPreferences.getInstance();
     final raw       = _prefs?.getStringList('emergency_contacts') ?? [];
@@ -141,7 +209,10 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     await _prefs?.setString('user_phone_number', num);
   }
 
-  // ── emergency service init ───────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // EMERGENCY SERVICE
+  // ══════════════════════════════════════════════════════════════════════════
+
   Future<void> _initializeEmergencyService() async {
     try {
       final granted = await EmergencyService.requestPermissions();
@@ -153,7 +224,6 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     }
   }
 
-  // ── contacts ─────────────────────────────────────────────────────────────
   void _addContact(EmergencyContact contact) {
     setState(() => _contacts.add(contact));
     _saveContacts();
@@ -167,7 +237,6 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     _audio.speakDirect("Contact $name removed");
   }
 
-  // ── snackbar helper ───────────────────────────────────────────────────────
   void _showSnackBar(String message, {bool isSuccess = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -178,7 +247,10 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     );
   }
 
-  // ── fall detection ────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // FALL DETECTION
+  // ══════════════════════════════════════════════════════════════════════════
+
   void _startFallDetection() {
     _accelSub = userAccelerometerEventStream().listen((event) {
       if (_detectFall(event)) {
@@ -208,7 +280,8 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     HapticFeedback.heavyImpact();
 
     _fallCountdownTimer?.cancel();
-    _fallCountdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _fallCountdownTimer =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _fallCountdownSeconds--);
       if (_fallCountdownSeconds <= 0) {
         timer.cancel();
@@ -225,7 +298,10 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     HapticFeedback.mediumImpact();
   }
 
-  // ── emergency alert ───────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // EMERGENCY ALERT
+  // ══════════════════════════════════════════════════════════════════════════
+
   Future<void> _sendEmergencyAlerts() async {
     if (_contacts.isEmpty) {
       _audio.speakDirect(
@@ -236,15 +312,12 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     _audio.speakDirect("Sending emergency alerts now.");
     HapticFeedback.heavyImpact();
 
-    // Check SMS capability
     final canSend = await canSendSMS();
-    debugPrint("Can send SMS: $canSend");
     if (!canSend) {
       _audio.speakDirect("This device cannot send SMS.");
       return;
     }
 
-    // Location
     String locationUrl = "https://maps.google.com/?q=0,0";
     try {
       final permission = await Geolocator.checkPermission();
@@ -259,33 +332,23 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
       );
       locationUrl =
           "https://maps.google.com/?q=${pos.latitude},${pos.longitude}";
-      debugPrint("Location: $locationUrl");
     } catch (e) {
       debugPrint("Location error (using fallback): $e");
     }
 
-    // Build message
     final senderInfo =
         _userPhoneNumber.isNotEmpty ? " This is $_userPhoneNumber." : "";
     final message =
         "EMERGENCY:$senderInfo I need help! My location: $locationUrl";
-    debugPrint("Message: $message");
 
-    // Deduplicate numbers
     final uniqueNumbers = _contacts
         .map((c) => c.number.replaceAll(RegExp(r'[^\d+]'), ''))
         .where((n) => n.isNotEmpty)
         .toSet()
         .toList();
-    debugPrint("Sending to: $uniqueNumbers");
 
-    // Send SMS
     try {
-      final result = await sendSMS(
-        message: message,
-        recipients: uniqueNumbers,
-      );
-      debugPrint("SMS result: $result");
+      await sendSMS(message: message, recipients: uniqueNumbers);
       _audio.speakDirect(
           "Emergency alert sent to ${uniqueNumbers.length} contacts.");
     } catch (e) {
@@ -294,10 +357,17 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     }
   }
 
-  // ── nav polling ───────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // NAV POLLING
+  // ══════════════════════════════════════════════════════════════════════════
+
   void _startNavPolling() {
     _navTimer?.cancel();
-    _navTimer = Timer.periodic(const Duration(milliseconds: 1200), (_) async {
+    _navTimer =
+        Timer.periodic(const Duration(milliseconds: 1200), (_) async {
+      // Pause nav polling while scene analysis overlay is visible
+      if (_sceneAnalysisController.state != AnalysisState.idle) return;
+
       try {
         final res = await http
             .get(Uri.parse(_navUrl))
@@ -320,7 +390,10 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     });
   }
 
-  // ── WebRTC ────────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // WEBRTC
+  // ══════════════════════════════════════════════════════════════════════════
+
   Future<void> _startWebRTC() async {
     try {
       _setStatus("Requesting permissions...");
@@ -344,7 +417,7 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
       setState(() => _localRenderer.srcObject = _localStream);
 
       _pc = await createPeerConnection({
-        'iceServers': [],
+        'iceServers':           [],
         'sdpSemantics':         'unified-plan',
         'iceCandidatePoolSize': 0,
       });
@@ -364,7 +437,6 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
         }
         if (state ==
             RTCPeerConnectionState.RTCPeerConnectionStateDisconnected) {
-          debugPrint("WebRTC disconnected — waiting for recovery...");
           Future.delayed(const Duration(seconds: 5), () {
             if (_pc?.connectionState ==
                 RTCPeerConnectionState.RTCPeerConnectionStateDisconnected) {
@@ -376,10 +448,12 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
         }
       };
 
-      _pc!.onIceConnectionState = (s) => debugPrint("ICE connection: ${s.name}");
-      _pc!.onIceGatheringState  = (s) => debugPrint("ICE gathering: ${s.name}");
+      _pc!.onIceConnectionState =
+          (s) => debugPrint("ICE connection: ${s.name}");
+      _pc!.onIceGatheringState =
+          (s) => debugPrint("ICE gathering: ${s.name}");
       _pc!.onIceCandidate =
-          (candidate) => debugPrint("ICE candidate: ${candidate.candidate}");
+          (c) => debugPrint("ICE candidate: ${c.candidate}");
 
       for (final track in _localStream!.getTracks()) {
         await _pc!.addTrack(track, _localStream!);
@@ -436,8 +510,7 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     };
     await c.future.timeout(
       const Duration(seconds: 15),
-      onTimeout: () => debugPrint(
-          "ICE gathering timeout — sending SDP with available candidates"),
+      onTimeout: () => debugPrint("ICE gathering timeout"),
     );
   }
 
@@ -445,7 +518,6 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     if (mounted) setState(() => _status = s);
   }
 
-  // ── retry ─────────────────────────────────────────────────────────────────
   void _retry() {
     _navTimer?.cancel();
     _audio.stop();
@@ -458,407 +530,463 @@ class _WebRTCPageState extends State<WebRTCPage> with WidgetsBindingObserver {
     _startWebRTC();
   }
 
-  // ── add contact dialog ────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // ADD CONTACT DIALOG
+  // ══════════════════════════════════════════════════════════════════════════
+
   void _showAddContactDialog() {
-    final nameController   = TextEditingController();
-    final numberController = TextEditingController();
+    final nameCtrl   = TextEditingController();
+    final numberCtrl = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: const Color(0xFF1A1A2E),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            "Add Emergency Contact",
-            style:
-                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Name",
-                  labelStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6)),
-                  prefixIcon:
-                      const Icon(Icons.person, color: Colors.orangeAccent),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(color: Colors.orangeAccent),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              TextField(
-                controller: numberController,
-                style: const TextStyle(color: Colors.white),
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: "Phone Number",
-                  labelStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6)),
-                  prefixIcon:
-                      const Icon(Icons.phone, color: Colors.orangeAccent),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(color: Colors.orangeAccent),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text("Cancel",
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5))),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orangeAccent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-              ),
-              onPressed: () {
-                final name   = nameController.text.trim();
-                final number = numberController.text.trim();
-                if (name.isNotEmpty && number.isNotEmpty) {
-                  _addContact(EmergencyContact(name: name, number: number));
-                  Navigator.pop(ctx);
-                }
-              },
-              child: const Text("Add",
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20)),
+        title: const Text("Add Emergency Contact",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _contactField(nameCtrl,   "Name",         Icons.person),
+            const SizedBox(height: 14),
+            _contactField(numberCtrl, "Phone Number",  Icons.phone,
+                keyboard: TextInputType.phone),
           ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text("Cancel",
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5))),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orangeAccent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () {
+              final name   = nameCtrl.text.trim();
+              final number = numberCtrl.text.trim();
+              if (name.isNotEmpty && number.isNotEmpty) {
+                _addContact(EmergencyContact(name: name, number: number));
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text("Add",
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _contactField(
+    TextEditingController ctrl,
+    String label,
+    IconData icon, {
+    TextInputType keyboard = TextInputType.text,
+  }) {
+    return TextField(
+      controller: ctrl,
+      style: const TextStyle(color: Colors.white),
+      keyboardType: keyboard,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle:
+            TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+        prefixIcon: Icon(icon, color: Colors.orangeAccent),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+              color: Colors.white.withValues(alpha: 0.2)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide:
+              const BorderSide(color: Colors.orangeAccent),
         ),
       ),
     );
   }
 
-  // ── UI ────────────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // BUILD
+  // ══════════════════════════════════════════════════════════════════════════
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // full screen camera
-          Positioned.fill(
-            child: RTCVideoView(
-              _localRenderer,
-              objectFit:
-                  RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-              mirror: false,
-            ),
-          ),
+          // ── Listener — routes all pointer events to gesture detector ────
+          Listener(
+            onPointerDown: (e) => _gestureDetector.onTapDown(TapDownDetails(
+              globalPosition: e.position,
+              localPosition:  e.localPosition,
+              kind:           e.kind,
+            )),
+            onPointerUp: (e) => _gestureDetector.onTapUp(TapUpDetails(
+              globalPosition: e.position,
+              localPosition:  e.localPosition,
+              kind:           e.kind,
+            )),
+            onPointerMove: _gestureDetector.onPointerMove,
+            child: Stack(
+              children: [
 
-          // top status bar
-          Positioned(
-            top: 0, left: 0, right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.8),
-                    Colors.transparent,
-                  ],
+                // ── Full-screen camera ──────────────────────────────────
+                Positioned.fill(
+                  child: RTCVideoView(
+                    _localRenderer,
+                    objectFit: RTCVideoViewObjectFit
+                        .RTCVideoViewObjectFitCover,
+                    mirror: false,
+                  ),
                 ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 52, 16, 18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.15)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 7, height: 7,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _status == "Streaming"
-                                  ? Colors.greenAccent
-                                  : Colors.orangeAccent,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              _status,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color:
-                                      Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 11),
-                            ),
-                          ),
+
+                // ── Top status bar ──────────────────────────────────────
+                Positioned(
+                  top: 0, left: 0, right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end:   Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.8),
+                          Colors.transparent,
                         ],
                       ),
                     ),
-                  ),
-                  Row(children: [
-                    if (_objectCount > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: _isSafe
-                              ? Colors.green.withValues(alpha: 0.25)
-                              : Colors.red.withValues(alpha: 0.35),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: _isSafe
-                                ? Colors.greenAccent.withValues(alpha: 0.4)
-                                : Colors.redAccent.withValues(alpha: 0.5),
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 52, 16, 18),
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                      children: [
+                        // status pill
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white
+                                  .withValues(alpha: 0.1),
+                              borderRadius:
+                                  BorderRadius.circular(20),
+                              border: Border.all(
+                                  color: Colors.white
+                                      .withValues(alpha: 0.15)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 7, height: 7,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _status == "Streaming"
+                                        ? Colors.greenAccent
+                                        : Colors.orangeAccent,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    _status,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.8),
+                                        fontSize: 11),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: Text(
-                          "$_objectCount object${_objectCount != 1 ? 's' : ''}",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 11),
-                        ),
-                      ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () {
-                        _audio.toggle();
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.1),
-                        ),
-                        child: Icon(
-                          _audio.enabled
-                              ? Icons.volume_up
-                              : Icons.volume_off,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ]),
-                ],
-              ),
-            ),
-          ),
 
-          // bottom nav bar
-          Positioned(
-            bottom: 0, left: 0, right: 0,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    _isSafe
-                        ? Colors.black.withValues(alpha: 0.85)
-                        : Colors.red.shade900.withValues(alpha: 0.9),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(children: [
-                    Icon(
-                      _isSafe
-                          ? Icons.check_circle_outline
-                          : Icons.warning_amber_rounded,
-                      color: _isSafe
-                          ? Colors.greenAccent
-                          : Colors.yellowAccent,
-                      size: 14,
+                        // object count + mute button
+                        Row(children: [
+                          if (_objectCount > 0)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: _isSafe
+                                    ? Colors.green
+                                        .withValues(alpha: 0.25)
+                                    : Colors.red
+                                        .withValues(alpha: 0.35),
+                                borderRadius:
+                                    BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: _isSafe
+                                      ? Colors.greenAccent
+                                          .withValues(alpha: 0.4)
+                                      : Colors.redAccent
+                                          .withValues(alpha: 0.5),
+                                ),
+                              ),
+                              child: Text(
+                                "$_objectCount object"
+                                "${_objectCount != 1 ? 's' : ''}",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {
+                              _audio.toggle();
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                                    .withValues(alpha: 0.1),
+                              ),
+                              child: Icon(
+                                _audio.enabled
+                                    ? Icons.volume_up
+                                    : Icons.volume_off,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ],
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _isSafe ? "CLEAR" : "DANGER",
-                      style: TextStyle(
-                        color: _isSafe
-                            ? Colors.greenAccent
-                            : Colors.yellowAccent,
-                        fontSize: 10,
-                        letterSpacing: 1.8,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ]),
-                  const SizedBox(height: 6),
-                  Text(
-                    _navMessage.isEmpty
-                        ? "Waiting for detection..."
-                        : _navMessage,
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 14, height: 1.4),
                   ),
-                ],
-              ),
-            ),
-          ),
+                ),
 
-          // fall countdown overlay
-          if (_fallCountdownActive)
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: _cancelFallCountdown,
-                child: Container(
-                  color: Colors.red.withValues(alpha: 0.6),
-                  child: Center(
+                // ── Bottom nav panel ────────────────────────────────────
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end:   Alignment.topCenter,
+                        colors: [
+                          _isSafe
+                              ? Colors.black
+                                  .withValues(alpha: 0.85)
+                              : Colors.red.shade900
+                                  .withValues(alpha: 0.9),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 24, 16, 8),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.warning_amber_rounded,
-                            color: Colors.white, size: 80),
-                        const SizedBox(height: 16),
-                        const Text(
-                          "FALL DETECTED",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
+                        Row(children: [
+                          Icon(
+                            _isSafe
+                                ? Icons.check_circle_outline
+                                : Icons.warning_amber_rounded,
+                            color: _isSafe
+                                ? Colors.greenAccent
+                                : Colors.yellowAccent,
+                            size: 14,
                           ),
-                        ),
-                        const SizedBox(height: 8),
+                          const SizedBox(width: 6),
+                          Text(
+                            _isSafe ? "CLEAR" : "DANGER",
+                            style: TextStyle(
+                              color: _isSafe
+                                  ? Colors.greenAccent
+                                  : Colors.yellowAccent,
+                              fontSize: 10,
+                              letterSpacing: 1.8,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ]),
+                        const SizedBox(height: 6),
                         Text(
-                          "Sending alert in $_fallCountdownSeconds s",
+                          _navMessage.isEmpty
+                              ? "Waiting for detection..."
+                              : _navMessage,
                           style: const TextStyle(
-                              color: Colors.white70, fontSize: 18),
-                        ),
-                        const SizedBox(height: 24),
-                        OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Colors.white, width: 2),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 32, vertical: 14),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30)),
-                          ),
-                          onPressed: _cancelFallCountdown,
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          label: const Text("TAP TO CANCEL",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
+                              color: Colors.white,
+                              fontSize: 14,
+                              height: 1.4),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ),
 
-          // gesture detector (camera area)
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onDoubleTap: () => _audio.speakDirect(
-                  _navMessage.isEmpty ? "No message yet" : _navMessage),
-              onLongPress: () {
-                _audio.toggle();
-                HapticFeedback.heavyImpact();
-                _audio.speakDirect(
-                    _audio.enabled ? "Audio on" : "Audio off");
-                setState(() {});
-              },
-            ),
-          ),
-
-          // retry + SOS buttons
-          Positioned(
-            top: 108, right: 12,
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: _retry,
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.1),
-                      border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.15)),
+                // ── Fall countdown overlay ──────────────────────────────
+                if (_fallCountdownActive)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: _cancelFallCountdown,
+                      child: Container(
+                        color: Colors.red.withValues(alpha: 0.6),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.warning_amber_rounded,
+                                  color: Colors.white, size: 80),
+                              const SizedBox(height: 16),
+                              const Text(
+                                "FALL DETECTED",
+                                style: TextStyle(
+                                  color:       Colors.white,
+                                  fontSize:    28,
+                                  fontWeight:  FontWeight.w900,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Sending alert in"
+                                " $_fallCountdownSeconds s",
+                                style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 18),
+                              ),
+                              const SizedBox(height: 24),
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: Colors.white, width: 2),
+                                  padding:
+                                      const EdgeInsets.symmetric(
+                                          horizontal: 32,
+                                          vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30)),
+                                ),
+                                onPressed: _cancelFallCountdown,
+                                icon: const Icon(Icons.close,
+                                    color: Colors.white),
+                                label: const Text("TAP TO CANCEL",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight:
+                                            FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                    child: const Icon(Icons.refresh,
-                        color: Colors.white, size: 20),
+                  ),
+
+                // ── Long-press → toggle audio ───────────────────────────
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onLongPress: () {
+                      _audio.toggle();
+                      HapticFeedback.heavyImpact();
+                      _audio.speakDirect(
+                          _audio.enabled ? "Audio on" : "Audio off");
+                      setState(() {});
+                    },
                   ),
                 ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    _panelController.animateTo(
-                      0.5,
-                      duration: const Duration(milliseconds: 350),
-                      curve: Curves.easeOut,
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.red.withValues(alpha: 0.25),
-                      border: Border.all(
-                          color: Colors.redAccent.withValues(alpha: 0.5)),
-                    ),
-                    child: const Icon(Icons.sos_rounded,
-                        color: Colors.redAccent, size: 20),
+
+                // ── Right-side buttons ──────────────────────────────────
+                Positioned(
+                  top: 108, right: 12,
+                  child: Column(
+                    children: [
+                      // Retry
+                      _iconButton(
+                        icon: Icons.refresh,
+                        color: Colors.white,
+                        bg: Colors.white.withValues(alpha: 0.1),
+                        border:
+                            Colors.white.withValues(alpha: 0.15),
+                        onTap: _retry,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // SOS
+                      _iconButton(
+                        icon: Icons.sos_rounded,
+                        color: Colors.redAccent,
+                        bg: Colors.red.withValues(alpha: 0.25),
+                        border: Colors.redAccent
+                            .withValues(alpha: 0.5),
+                        onTap: () => _panelController.animateTo(
+                          0.5,
+                          duration:
+                              const Duration(milliseconds: 350),
+                          curve: Curves.easeOut,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   ),
                 ),
+
+                // ── Sliding emergency panel ─────────────────────────────
+                EmergencyPanel(
+                  panelController:       _panelController,
+                  userPhoneController:   _userPhoneController,
+                  onSaveUserPhone:       _saveUserPhone,
+                  onSendEmergencyAlerts: _sendEmergencyAlerts,
+                  onShowAddContactDialog: _showAddContactDialog,
+                  contacts:              _contacts,
+                  onRemoveContact:       _removeContact,
+                ),
+
               ],
             ),
           ),
 
-          // sliding emergency panel
-          EmergencyPanel(
-            panelController: _panelController,
-            userPhoneController: _userPhoneController,
-            onSaveUserPhone: _saveUserPhone,
-            onSendEmergencyAlerts: _sendEmergencyAlerts,
-            onShowAddContactDialog: _showAddContactDialog,
-            contacts: _contacts,
-            onRemoveContact: _removeContact,
-          ),
+          // ── Scene Analysis Overlay ──────────────────────────────────────
+          // Sits OUTSIDE the inner Stack so it always renders on top of
+          // the emergency panel and fall overlay.
+          SceneAnalysisOverlay(controller: _sceneAnalysisController),
+
         ],
+      ),
+    );
+  }
+
+  // ── small helper ──────────────────────────────────────────────────────────
+  Widget _iconButton({
+    required IconData  icon,
+    required Color     color,
+    required Color     bg,
+    required Color     border,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          shape:  BoxShape.circle,
+          color:  bg,
+          border: Border.all(color: border),
+        ),
+        child: Icon(icon, color: color, size: 20),
       ),
     );
   }

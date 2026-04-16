@@ -12,6 +12,9 @@ from aiortc import RTCPeerConnection, RTCSessionDescription
 from ultralytics import YOLO
 from logger import log_frame, log_event, write_summary
 
+import torch
+import traceback
+
 
 # ── globals ────────────────────────────────────────────────────────────────────
 pcs           = set()
@@ -21,9 +24,15 @@ model.to("mps")  # uncomment for Apple Silicon GPU
 latest_frame    = None
 processed_frame = None
 navigation_data = None   # sent to phone as JSON over HTTP polling
+latest_detections = []   # raw YOLO detections with bounding boxes
 lock            = threading.Lock()
 RUNNING         = True
 stream_active   = False
+
+# ── depth model (lazy-loaded on first /scene request) ─────────────────────────
+depth_model  = None
+depth_loaded = False
+DEPTH_DEVICE = "cpu"
 
 # ── danger classes (COCO labels that matter for navigation) ───────────────────
 DANGER_CLASSES = {
@@ -99,6 +108,86 @@ def get_proximity(area, frame_area):
     elif ratio > 0.08:
         return "medium"
     return "far"
+
+
+# ── Depth Anything V2 (on-demand for /scene endpoint) ─────────────────────────
+def ensure_depth_model():
+    """Lazy-load Depth Anything V2 on first /scene request."""
+    global depth_model, depth_loaded, DEPTH_DEVICE
+    if depth_loaded:
+        return depth_model is not None
+    depth_loaded = True
+    try:
+        from depth_anything_v2.dpt import DepthAnythingV2
+        print("\n🔄 Loading Depth Anything V2 (ViT-Small)...")
+        DEPTH_DEVICE = (
+            "mps"   if torch.backends.mps.is_available()  else
+            "cuda"  if torch.cuda.is_available()           else
+            "cpu"
+        )
+        print(f"   Device: {DEPTH_DEVICE}")
+        cfg = {
+            "encoder":       "vits",
+            "features":      64,
+            "out_channels":  [48, 96, 192, 384],
+        }
+        depth_model = DepthAnythingV2(**cfg)
+        depth_model.load_state_dict(
+            torch.load(
+                "checkpoints/depth_anything_v2_vits.pth",
+                map_location="cpu",
+                weights_only=True,
+            )
+        )
+        depth_model = depth_model.to(DEPTH_DEVICE).eval()
+        print("✅ Depth model loaded.")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to load depth model: {e}")
+        traceback.print_exc()
+        return False
+
+
+def run_depth(frame):
+    """Run Depth Anything V2 on a frame. Returns normalised depth map (0-1)."""
+    h, w = frame.shape[:2]
+    scale = 308 / w
+    small = cv2.resize(frame, (308, int(h * scale)))
+    with torch.no_grad():
+        depth = depth_model.infer_image(small)
+    depth_resized = cv2.resize(depth, (w, h), interpolation=cv2.INTER_LINEAR)
+    d_min, d_max = depth_resized.min(), depth_resized.max()
+    if d_max > d_min:
+        return (depth_resized - d_min) / (d_max - d_min)
+    return np.zeros_like(depth_resized)
+
+
+def get_depth_for_box(depth_map, x1, y1, x2, y2):
+    """Median depth in centre 50% of a bounding box. 1.0 = closest."""
+    cx1 = x1 + (x2 - x1) // 4
+    cy1 = y1 + (y2 - y1) // 4
+    cx2 = x1 + 3 * (x2 - x1) // 4
+    cy2 = y1 + 3 * (y2 - y1) // 4
+    cx1, cx2 = max(0, cx1), min(depth_map.shape[1] - 1, cx2)
+    cy1, cy2 = max(0, cy1), min(depth_map.shape[0] - 1, cy2)
+    region = depth_map[cy1:cy2, cx1:cx2]
+    if region.size == 0:
+        return 0.5
+    return 1.0 - float(np.median(region))  # invert: 1.0 = very close
+
+
+def depth_to_proximity(depth_val):
+    if depth_val > 0.72:  return "close"
+    if depth_val > 0.45:  return "medium"
+    return "far"
+
+
+def depth_to_meters_estimate(depth_val):
+    if depth_val > 0.85:  return "under 1 metre"
+    if depth_val > 0.72:  return "about 1 to 2 metres"
+    if depth_val > 0.55:  return "about 2 to 4 metres"
+    if depth_val > 0.45:  return "about 4 to 6 metres"
+    return "far away"
 
 
 def generate_navigation_message(detections, frame_w, frame_h):
@@ -280,6 +369,7 @@ def process_frames():
         with lock:
             processed_frame = annotated
             navigation_data = nav
+            latest_detections = detections   # store raw detections for /scene
 
         log_frame(detections, nav, w, h)
 
@@ -301,6 +391,105 @@ async def nav_status(request):
     return web.Response(
         content_type="application/json",
         text=json.dumps(data),
+    )
+
+
+async def scene_analysis(request):
+    """On-demand YOLO + Depth Anything V2 analysis for double-tap gesture."""
+    with lock:
+        frame = latest_frame.copy() if latest_frame is not None else None
+        dets  = [dict(d) for d in latest_detections]  # deep copy
+
+    if frame is None or not dets:
+        print("\n⚠️  /scene called but no frame or detections available")
+        return web.Response(
+            content_type="application/json",
+            text=json.dumps({
+                "message": "No frame available",
+                "alerts":  [],
+                "safe":    True,
+                "timestamp": time.time(),
+                "depth_available": False,
+            }),
+        )
+
+    h, w = frame.shape[:2]
+    has_depth = ensure_depth_model()
+
+    # ── Run depth analysis ──────────────────────────────────────────────────
+    if has_depth:
+        try:
+            depth_map = run_depth(frame)
+            for det in dets:
+                dv = get_depth_for_box(depth_map,
+                                      det["x1"], det["y1"],
+                                      det["x2"], det["y2"])
+                det["depth"]           = round(dv, 3)
+                det["depth_proximity"] = depth_to_proximity(dv)
+                det["distance_est"]    = depth_to_meters_estimate(dv)
+        except Exception as e:
+            print(f"❌ Depth inference error: {e}")
+            has_depth = False
+
+    # Fallback: area-based depth if model unavailable
+    if not has_depth:
+        for det in dets:
+            ratio = det["area"] / (w * h)
+            det["depth"]           = round(min(ratio * 4, 1.0), 3)
+            det["depth_proximity"] = (
+                "close"  if ratio > 0.25 else
+                "medium" if ratio > 0.08 else "far"
+            )
+            det["distance_est"]    = ""
+
+    # ── Print to terminal ───────────────────────────────────────────────────
+    print("\n" + "=" * 65)
+    print("🔍 SCENE ANALYSIS (YOLO + Depth Anything V2)")
+    print("-" * 65)
+    print(f"  {'Object':<15s} {'Zone':<8s} {'Depth':<8s} {'Proximity':<10s} {'Distance'}")
+    print("-" * 65)
+    for det in dets:
+        zone = get_zone(det["cx"], w)
+        print(f"  {det['label']:<15s} {zone:<8s} {det.get('depth', 0):<8.3f} "
+              f"{det.get('depth_proximity', '?'):<10s} {det.get('distance_est', '')}")
+    print("=" * 65)
+    print(f"  Depth model: {'✅ Active' if has_depth else '⚠️  Fallback (area-based)'}")
+    print(f"  Objects: {len(dets)}, Frame: {w}x{h}")
+    print("=" * 65 + "\n")
+
+    # ── Build response ──────────────────────────────────────────────────────
+    alerts = []
+    for det in dets:
+        zone = get_zone(det["cx"], w)
+        alerts.append({
+            "label":          det["label"],
+            "conf":           round(det["conf"], 2),
+            "x1": det["x1"], "y1": det["y1"],
+            "x2": det["x2"], "y2": det["y2"],
+            "zone":           zone,
+            "depth":          det.get("depth", 0.5),
+            "depth_proximity": det.get("depth_proximity", "medium"),
+            "distance_est":   det.get("distance_est", ""),
+            "danger":         det["label"] in DANGER_CLASSES,
+        })
+
+    # Sort by depth (closest first)
+    alerts.sort(key=lambda a: a["depth"], reverse=True)
+
+    safe = not any(
+        a["danger"] and a["depth_proximity"] in ("close", "medium")
+        for a in alerts
+    )
+
+    return web.Response(
+        content_type="application/json",
+        text=json.dumps({
+            "message":         "Scene analysis complete",
+            "alerts":          alerts,
+            "safe":            safe,
+            "timestamp":       time.time(),
+            "depth_available": has_depth,
+        }),
     )
 
 
@@ -397,6 +586,7 @@ async def run_server_async():
     app = web.Application()
     app.router.add_get("/",      index)
     app.router.add_get("/nav",   nav_status)
+    app.router.add_get("/scene", scene_analysis)
     app.router.add_post("/offer", offer)
 
     runner = web.AppRunner(app)
